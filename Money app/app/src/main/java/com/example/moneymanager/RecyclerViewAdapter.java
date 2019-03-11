@@ -1,7 +1,9 @@
 package com.example.moneymanager;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -79,9 +81,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db = AppDatabase.getInstance(context);
-                Category category = db.categoryDAO().findById(data.get(position).getId());
-                db.categoryDAO().deleteCateogry(category);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(true);
+                builder.setTitle("Delete");
+                builder.setMessage("Are you sure you want to delete this category all your data will be lost");
+                builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db = AppDatabase.getInstance(context);
+                        Category category = db.categoryDAO().findById(data.get(position).getId());
+                        db.categoryDAO().deleteCateogry(category);
+                    }
+                });
+                builder.show();
+
             }
         });
     }
