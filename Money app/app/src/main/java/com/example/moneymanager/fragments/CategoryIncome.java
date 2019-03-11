@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moneymanager.CategoriesActivity;
+import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.Type;
 import com.example.moneymanager.R;
@@ -26,6 +27,8 @@ public class CategoryIncome extends Fragment {
 
     View view;
     private RecyclerView recyclerView;
+    private AppDatabase db;
+    private RecyclerViewAdapter recyclerViewAdapter;
     List<Category> listCategory;
     Button add;
 
@@ -34,7 +37,6 @@ public class CategoryIncome extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listCategory = categoryListOfIncomes();
     }
 
 
@@ -42,9 +44,12 @@ public class CategoryIncome extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.category_income, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.income_recyclerview);
-        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(getContext(), listCategory);
+        recyclerViewAdapter = new RecyclerViewAdapter(getContext(), listCategory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        db = AppDatabase.getInstance(getContext());
+
         add = (Button) view.findViewById(R.id.add_category_income);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,11 +61,9 @@ public class CategoryIncome extends Fragment {
         return view;
     }
 
-    public List<Category> categoryListOfIncomes(){
-        List<Category> list = new ArrayList<>();
-        list.add(new Category("Salary", R.drawable.salary, Type.INCOME));
-        list.add(new Category("Investments", R.drawable.investments, Type.INCOME));
-        list.add(new Category("Dividends", R.drawable.dividends, Type.INCOME));
-        return list;
+    @Override
+    public void onResume() {
+        super.onResume();
+        recyclerViewAdapter.setIncomes(db.categoryDAO().loadAllIncomes());
     }
 }

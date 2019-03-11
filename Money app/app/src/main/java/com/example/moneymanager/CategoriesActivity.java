@@ -32,6 +32,8 @@ public class CategoriesActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
 
+
+
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setElevation(0);
         // Set the action bar back button to look like an up button

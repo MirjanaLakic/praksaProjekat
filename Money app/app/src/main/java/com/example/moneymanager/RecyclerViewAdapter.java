@@ -1,5 +1,6 @@
 package com.example.moneymanager;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 
 import java.util.List;
@@ -54,5 +56,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tv_name = (TextView) itemView.findViewById(R.id.name_category);
             img = (ImageView) itemView.findViewById(R.id.img_category);
         }
+    }
+
+    public void setExpenses(List<Category> categoryList){
+        data = categoryList;
+        notifyDataSetChanged();
+    }
+
+    public void setIncomes(List<Category> categoryList){
+        data = categoryList;
+        notifyDataSetChanged();
     }
 }
