@@ -12,10 +12,10 @@ import java.util.List;
 @Dao
 public interface CategoryDAO {
 
-    @Query("SELECT * FROM Categories WHERE type = 'EXPENSES'")
+    @Query("SELECT * FROM Categories WHERE type = 'EXPENSES' ORDER BY id DESC")
     LiveData<List<Category>> loadAllExpences();
 
-    @Query("SELECT * FROM Categories WHERE type = 'INCOME'")
+    @Query("SELECT * FROM Categories WHERE type = 'INCOME' ORDER BY id DESC")
     LiveData<List<Category>> loadAllIncomes();
 
     @Query("SELECT * FROM Categories WHERE id =:id")
