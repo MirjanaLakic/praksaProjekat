@@ -17,6 +17,9 @@ public interface CategoryDAO {
     @Query("SELECT * FROM Categories WHERE type = 'INCOME'")
     List<Category> loadAllIncomes();
 
+    @Query("SELECT * FROM Categories WHERE id =:id")
+    Category findById(int id);
+
     @Insert
     void addCategory(Category category);
 

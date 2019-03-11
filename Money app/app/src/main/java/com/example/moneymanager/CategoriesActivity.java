@@ -8,6 +8,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
 import com.example.moneymanager.fragments.CategoryExpenses;
 import com.example.moneymanager.fragments.CategoryIncome;
 
@@ -17,11 +20,13 @@ public class CategoriesActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPagerAdapter viewPagerAdapter;
     private ViewPager viewPager;
+    ImageButton delete;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitvity_categories);
+
         tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
         viewPager = (ViewPager) findViewById(R.id.viewpaget_id);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -38,6 +43,12 @@ public class CategoriesActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+/*        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "DELETE", Toast.LENGTH_LONG).show();
+            }
+        });*/
     }
 
     public CategoriesActivity(){ }

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -34,7 +35,7 @@ public class CategoryExpenses extends Fragment {
     private RecyclerView recyclerView;
     List<Category> listCategory;
     Button add;
-    ImageView delete;
+    ImageButton delete;
 
     public CategoryExpenses(){}
 
@@ -61,6 +62,7 @@ public class CategoryExpenses extends Fragment {
                 startActivity(intent);
             }
         });
+
         return view;
     }
 

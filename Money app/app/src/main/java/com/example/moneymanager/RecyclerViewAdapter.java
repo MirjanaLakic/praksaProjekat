@@ -2,12 +2,15 @@ package com.example.moneymanager;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
@@ -18,6 +21,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     Context context;
     List<Category> data;
+    AppDatabase db;
 
     public RecyclerViewAdapter(Context context, List<Category> data) {
         this.context = context;
@@ -49,12 +53,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         private TextView tv_name;
         private ImageView img;
+        private ImageButton delete;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             tv_name = (TextView) itemView.findViewById(R.id.name_category);
             img = (ImageView) itemView.findViewById(R.id.img_category);
+            delete = (ImageButton) itemView.findViewById(R.id.delete_category);
         }
     }
 
@@ -66,5 +72,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void setIncomes(List<Category> categoryList){
         data = categoryList;
         notifyDataSetChanged();
+    }
+    @Override
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position, @NonNull List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db = AppDatabase.getInstance(context);
+                Category category = db.categoryDAO().findById(data.get(position).getId());
+                db.categoryDAO().deleteCateogry(category);
+            }
+        });
     }
 }
