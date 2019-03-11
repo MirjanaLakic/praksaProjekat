@@ -2,6 +2,7 @@ package com.example.moneymanager.DAO;
 
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
@@ -18,4 +19,7 @@ public interface CategoryDAO {
 
     @Insert
     void addCategory(Category category);
+
+    @Delete
+    void deleteCateogry(Category category);
 }

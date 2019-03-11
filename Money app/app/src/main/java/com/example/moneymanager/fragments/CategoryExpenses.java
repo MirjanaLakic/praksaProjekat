@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.moneymanager.AddExpenseActivity;
 import com.example.moneymanager.DAO.AppDatabase;
@@ -32,6 +34,7 @@ public class CategoryExpenses extends Fragment {
     private RecyclerView recyclerView;
     List<Category> listCategory;
     Button add;
+    ImageView delete;
 
     public CategoryExpenses(){}
 
