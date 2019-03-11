@@ -1,6 +1,7 @@
 package com.example.moneymanager.fragments;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.persistence.room.Database;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,6 +43,8 @@ public class CategoryExpenses extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = AppDatabase.getInstance(getContext());
+        retrieveExpenses();
     }
 
     @Override
@@ -51,8 +54,6 @@ public class CategoryExpenses extends Fragment {
         recyclerViewAdapter = new RecyclerViewAdapter(getContext(), listCategory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerViewAdapter);
-
-        db = AppDatabase.getInstance(getContext());
 
         add = (Button) view.findViewById(R.id.add_category_expenses);
         add.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +70,17 @@ public class CategoryExpenses extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        recyclerViewAdapter.setExpenses(db.categoryDAO().loadAllExpences());
+    }
+
+    private void retrieveExpenses() {
+        LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
+        // COMPLETED (5) Observe tasks and move the logic from runOnUiThread to onChanged
+        tasks.observe(this, new Observer<List<Category>>() {
+            @Override
+            public void onChanged(@Nullable List<Category> categories) {
+                recyclerViewAdapter.setExpenses(categories);
+            }
+        });
     }
 
 

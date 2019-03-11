@@ -57,9 +57,14 @@ public class AddExpenseActivity extends AppCompatActivity {
 
     public void onSaveButtonClicked(){
         String name = text.getText().toString();
-        Category category = new Category(name, R.drawable.home, "EXPENSES");
-        db.categoryDAO().addCategory(category);
-        finish();
+        final Category category = new Category(name, R.drawable.home, "EXPENSES");
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                db.categoryDAO().addCategory(category);
+                finish();
+            }
+        });
     }
 
     public AddExpenseActivity(){}

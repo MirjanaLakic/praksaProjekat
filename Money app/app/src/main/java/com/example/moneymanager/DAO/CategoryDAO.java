@@ -1,6 +1,7 @@
 package com.example.moneymanager.DAO;
 
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -12,10 +13,10 @@ import java.util.List;
 public interface CategoryDAO {
 
     @Query("SELECT * FROM Categories WHERE type = 'EXPENSES'")
-    List<Category> loadAllExpences();
+    LiveData<List<Category>> loadAllExpences();
 
     @Query("SELECT * FROM Categories WHERE type = 'INCOME'")
-    List<Category> loadAllIncomes();
+    LiveData<List<Category>> loadAllIncomes();
 
     @Query("SELECT * FROM Categories WHERE id =:id")
     Category findById(int id);

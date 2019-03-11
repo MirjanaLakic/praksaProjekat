@@ -48,6 +48,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
+        if (data == null){
+            return 0;
+        }
         return data.size();
     }
 
@@ -94,9 +97,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        db = AppDatabase.getInstance(context);
-                        Category category = db.categoryDAO().findById(data.get(position).getId());
-                        db.categoryDAO().deleteCateogry(category);
+                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                db = AppDatabase.getInstance(context);
+                                Category category = db.categoryDAO().findById(data.get(position).getId());
+                                db.categoryDAO().deleteCateogry(category);
+                            }
+                        });
                     }
                 });
                 builder.show();

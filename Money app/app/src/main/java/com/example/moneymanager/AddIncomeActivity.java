@@ -59,8 +59,13 @@ public class AddIncomeActivity extends AppCompatActivity {
 
     public void onSaveButtonClicked(){
         String name = text.getText().toString();
-        Category category = new Category(name, R.drawable.investments, "INCOME");
-        db.categoryDAO().addCategory(category);
-        finish();
+        final Category category = new Category(name, R.drawable.investments, "INCOME");
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                db.categoryDAO().addCategory(category);
+                finish();
+            }
+        });
     }
 }

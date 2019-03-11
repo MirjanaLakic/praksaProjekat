@@ -1,5 +1,7 @@
 package com.example.moneymanager.fragments;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,6 +39,8 @@ public class CategoryIncome extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = AppDatabase.getInstance(getContext());
+        retrieveIncomes();
     }
 
 
@@ -47,8 +51,6 @@ public class CategoryIncome extends Fragment {
         recyclerViewAdapter = new RecyclerViewAdapter(getContext(), listCategory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerViewAdapter);
-
-        db = AppDatabase.getInstance(getContext());
 
         add = (Button) view.findViewById(R.id.add_category_income);
         add.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +66,16 @@ public class CategoryIncome extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        recyclerViewAdapter.setIncomes(db.categoryDAO().loadAllIncomes());
+    }
+
+    private void retrieveIncomes() {
+        LiveData<List<Category>> tasks = db.categoryDAO().loadAllIncomes();
+        // COMPLETED (5) Observe tasks and move the logic from runOnUiThread to onChanged
+        tasks.observe(this, new Observer<List<Category>>() {
+            @Override
+            public void onChanged(@Nullable List<Category> categories) {
+                recyclerViewAdapter.setIncomes(categories);
+            }
+        });
     }
 }
