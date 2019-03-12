@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.example.moneymanager.AddExpenseActivity;
+import com.example.moneymanager.AddExpenseCategory;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.R;
@@ -54,7 +54,7 @@ public class CategoryExpenses extends Fragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddExpenseActivity.class);
+                Intent intent = new Intent(getActivity(), AddExpenseCategory.class);
                 startActivity(intent);
             }
         });

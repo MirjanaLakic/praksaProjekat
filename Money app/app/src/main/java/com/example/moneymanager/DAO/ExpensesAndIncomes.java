@@ -1,6 +1,7 @@
 package com.example.moneymanager.DAO;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
@@ -10,14 +11,20 @@ public class ExpensesAndIncomes {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
-    String name;
-    String note;
-    float price;
-    Date date;
-    String category;
+    private String note;
+    private float price;
+    private Date date;
+    private int category;
 
-    public ExpensesAndIncomes(int id,String name, String note, float price, Date date, String category) {
-        this.name = name;
+    @Ignore
+    public ExpensesAndIncomes(String note, float price, Date date, int category) {
+        this.note = note;
+        this.price = price;
+        this.date = date;
+        this.category = category;
+    }
+
+    public ExpensesAndIncomes(int id, String note, float price, Date date, int category) {
         this.id = id;
         this.note = note;
         this.price = price;
@@ -27,10 +34,6 @@ public class ExpensesAndIncomes {
 
     public int getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getNote() {
@@ -45,16 +48,12 @@ public class ExpensesAndIncomes {
         return date;
     }
 
-    public String getCategory() {
+    public int getCategory() {
         return category;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setNote(String note) {
@@ -69,7 +68,7 @@ public class ExpensesAndIncomes {
         this.date = date;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(int category) {
         this.category = category;
     }
 }

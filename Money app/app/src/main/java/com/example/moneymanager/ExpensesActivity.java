@@ -26,6 +26,7 @@ public class ExpensesActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tablayout_id_expenses);
         viewPager = (ViewPager) findViewById(R.id.viewpaget_id_expenses);
+        viewPager.setOffscreenPageLimit(3);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         viewPagerAdapter.addFragment(new ExpensesDaily(), "Daily");

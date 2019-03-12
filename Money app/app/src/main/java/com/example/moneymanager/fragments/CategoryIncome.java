@@ -17,7 +17,7 @@ import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.R;
 import com.example.moneymanager.RecyclerViewAdapter;
-import com.example.moneymanager.AddIncomeActivity;
+import com.example.moneymanager.AddIncomeCategory;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class CategoryIncome extends Fragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddIncomeActivity.class);
+                Intent intent = new Intent(getActivity(), AddIncomeCategory.class);
                 startActivity(intent);
             }
         });
