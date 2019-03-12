@@ -12,17 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.example.moneymanager.CategoriesActivity;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
-import com.example.moneymanager.DAO.Type;
 import com.example.moneymanager.R;
 import com.example.moneymanager.RecyclerViewAdapter;
 import com.example.moneymanager.AddIncomeActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryIncome extends Fragment {

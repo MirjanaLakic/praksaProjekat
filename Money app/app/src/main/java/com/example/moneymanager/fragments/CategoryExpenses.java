@@ -2,7 +2,6 @@ package com.example.moneymanager.fragments;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.persistence.room.Database;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,17 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.moneymanager.AddExpenseActivity;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
-import com.example.moneymanager.DAO.Type;
 import com.example.moneymanager.R;
 import com.example.moneymanager.RecyclerViewAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryExpenses extends Fragment {

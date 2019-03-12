@@ -89,7 +89,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(startSettingsActivity);
             return true;
         } else if (id == R.id.nav_gallery) {
-
+            Intent startSettingsActivity = new Intent(this, ExpensesActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
