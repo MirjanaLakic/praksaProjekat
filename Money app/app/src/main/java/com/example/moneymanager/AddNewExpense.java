@@ -50,14 +50,10 @@ public class AddNewExpense extends AppCompatActivity {
         String memoStr = memo.getText().toString();
         float priceint = Integer.parseInt(price.getText().toString());
         Date date = new Date();
-        final ExpensesAndIncomes obj = new ExpensesAndIncomes(memoStr, priceint, date, 1);
+        final ExpensesAndIncomes obj = new ExpensesAndIncomes(memoStr, priceint, date, 8);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-/*                DateFormat date = new SimpleDateFormat("yyyy-MM-dd");
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                System.out.println(date.format(new Date()));*/
-
                 db.expensesAndIncomeDAO().addNew(obj);
                 finish();
             }

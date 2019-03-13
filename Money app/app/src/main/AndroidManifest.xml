@@ -59,6 +59,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ExpensesActivity" />
         </activity>
+        <activity
+            android:name=".Details"
+            android:label="Details"
+            android:parentActivityName=".ExpensesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ExpensesActivity" />
+        </activity>
     </application>
 
 </manifest>

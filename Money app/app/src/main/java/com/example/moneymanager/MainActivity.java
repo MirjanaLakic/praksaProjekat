@@ -85,12 +85,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            Intent startSettingsActivity = new Intent(this, CategoriesActivity.class);
-            startActivity(startSettingsActivity);
+            Intent intent = new Intent(this, CategoriesActivity.class);
+            startActivity(intent);
             return true;
         } else if (id == R.id.nav_gallery) {
-            Intent startSettingsActivity = new Intent(this, ExpensesActivity.class);
-            startActivity(startSettingsActivity);
+            Intent intent = new Intent(this, ExpensesActivity.class);
+            startActivity(intent);
             return true;
         } else if (id == R.id.nav_slideshow) {
 
