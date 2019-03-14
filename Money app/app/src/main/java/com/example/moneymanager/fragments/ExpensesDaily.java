@@ -34,9 +34,11 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ExpensesDaily extends Fragment {
 
@@ -50,6 +52,9 @@ public class ExpensesDaily extends Fragment {
     private static String TAG = "MainActivity";
     final ArrayList<PieEntry> yEntry = new ArrayList<>();
     final ArrayList<String> xEntry = new ArrayList<>();
+    private static final String DATE_FORMAT = "dd/MM/yyy";
+    private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+    private float finalSum;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,8 +63,7 @@ public class ExpensesDaily extends Fragment {
         getList();
     }
 
-    public ExpensesDaily() {
-    }
+    public ExpensesDaily() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,26 +82,26 @@ public class ExpensesDaily extends Fragment {
                 startActivity(intent);
             }
         });
-
         return view;
     }
     private void getList() {
+        Date date1 = new Date();
+        final String date = dateFormat.format(date1);
         LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAll();
         tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
             @Override
             public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
-                recyclerViewAdapter.setList(lista);
-                pieDaily = (PieChart) view.findViewById(R.id.pie_daily);
-
-                pieDaily.setRotationEnabled(true);
-                pieDaily.setHoleRadius(70f);
-                pieDaily.setTransparentCircleAlpha(0);
-                pieDaily.setCenterText("Today\n Expenses" );
-                pieDaily.setCenterTextSize(10);
-                pieDaily.getDescription().setEnabled(false);
-                pieDaily.getLegend().setEnabled(false);
-
-                addDataToChart();
+                List<ExpensesAndIncomes> l = new ArrayList<>();
+                for (int i = 0; i < lista.size(); i++) {
+                        String dateFromLista = dateFormat.format(lista.get(i).getDate());
+                        if (dateFromLista.equals(date)){
+                            l.add(lista.get(i));
+                        }
+                }
+                recyclerViewAdapter.setList(l);
+                yEntry.clear();
+                xEntry.clear();
+                setPieChart();
             }
         });
     }
@@ -108,6 +112,8 @@ public class ExpensesDaily extends Fragment {
     }
 
     private void addDataToChart(){
+        Date date1 = new Date();
+        final String date = dateFormat.format(date1);
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
@@ -115,31 +121,43 @@ public class ExpensesDaily extends Fragment {
                 for (int i = 0; i < lista.size(); i++) {
                     float sum = 0;
                     List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
-                    if (categoryExpesess.size() != 0){
-                        xEntry.add(lista.get(i).getName());
-                        for (int j = 0; j < categoryExpesess.size(); j++) {
+                    for (int j = 0; j < categoryExpesess.size(); j++) {
+                        String dateFromLista = dateFormat.format(categoryExpesess.get(j).getDate());
+                        if (dateFromLista.equals(date)) {
                             sum += categoryExpesess.get(j).getPrice();
-
+                            xEntry.add(lista.get(i).getName());
                         }
+
+                    }
+                    if (sum != 0) {
                         yEntry.add(new PieEntry(sum, i));
+                        finalSum += sum;
                     }
                 }
                 //create the data set
                 PieDataSet pieDataSet = new PieDataSet(yEntry, "");
                 pieDataSet.setSliceSpace(0);
                 //pieDataSet.setDrawValues(false);
-
                 pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-
                 //create pie data object
                 PieData pieData = new PieData(pieDataSet);
                 pieDaily.setData(pieData);
+                pieDaily.setCenterText("Today\n"+ finalSum +"\nExpenses" );
                 pieDaily.invalidate();
 
             }
 
         });
+    }
 
-
+    public void setPieChart(){
+        pieDaily = (PieChart) view.findViewById(R.id.pie_daily);
+        pieDaily.setRotationEnabled(true);
+        pieDaily.setHoleRadius(70f);
+        pieDaily.setTransparentCircleAlpha(0);
+        pieDaily.setCenterTextSize(15);
+        pieDaily.getDescription().setEnabled(false);
+        pieDaily.getLegend().setEnabled(false);
+        addDataToChart();
     }
 }

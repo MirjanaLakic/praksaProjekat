@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface ExpensesAndIncomeDAO {
 
-    @Query("SELECT * FROM ExpensesAndIncomes")
+    @Query("SELECT * FROM ExpensesAndIncomes WHERE type = 'EXPENSE'")
     LiveData<List<ExpensesAndIncomes>> getAll();
 
     @Query("SELECT * FROM ExpensesAndIncomes WHERE category =:idCategory")

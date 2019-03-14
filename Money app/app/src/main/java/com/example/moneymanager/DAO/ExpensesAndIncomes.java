@@ -14,21 +14,24 @@ public class ExpensesAndIncomes {
     private String note;
     private float price;
     private Date date;
+    private String type;
     private int category;
 
     @Ignore
-    public ExpensesAndIncomes(String note, float price, Date date, int category) {
+    public ExpensesAndIncomes(String note, float price, Date date, String type, int category) {
         this.note = note;
         this.price = price;
         this.date = date;
+        this.type = type;
         this.category = category;
     }
 
-    public ExpensesAndIncomes(int id, String note, float price, Date date, int category) {
+    public ExpensesAndIncomes(int id, String note, float price, Date date, String type, int category) {
         this.id = id;
         this.note = note;
         this.price = price;
         this.date = date;
+        this.type = type;
         this.category = category;
     }
 
@@ -46,6 +49,10 @@ public class ExpensesAndIncomes {
 
     public Date getDate() {
         return date;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public int getCategory() {
@@ -66,6 +73,10 @@ public class ExpensesAndIncomes {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setCategory(int category) {

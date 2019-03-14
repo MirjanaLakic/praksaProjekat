@@ -9,4 +9,5 @@
     <string name="category_settings">Category settings</string>
     <string name="add_new_category">+ Add new category</string>
     <string name="expenses">Expenses</string>
+    <string name="details">Details</string>
 </resources>

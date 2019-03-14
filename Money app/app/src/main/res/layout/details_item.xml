@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,90 +7,126 @@
     android:layout_height="match_parent">
 
     <TableLayout
-        android:layout_width="395dp"
-        android:layout_height="337dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/table_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="35dp"
+        tools:layout_editor_absoluteX="120dp"
+        >
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="35dp"
+            android:layout_gravity="left"
+            android:paddingTop="5dp">
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                tools:layout_editor_absoluteX="16dp"
-                tools:layout_editor_absoluteY="319dp"
-                android:id="@+id/img_row"/>
+                android:id="@+id/img_row"
+                android:layout_width="25dp"
+                android:layout_height="25dp" />
 
             <TextView
+                android:id="@+id/category_row"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:text="CATEGORY"
-                tools:layout_editor_absoluteX="138dp"
-                tools:layout_editor_absoluteY="383dp"
-                android:id="@+id/category_row"/>
+                android:textAlignment="center" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="35dp"
+            android:layout_gravity="left"
+            android:paddingTop="5dp">
 
             <TextView
+                android:id="@+id/priceTitle_row"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:text="Price"
+                android:textColor="@color/grey" />
+
+            <TextView
+                android:id="@+id/price_row"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CATEGORY"
-                tools:layout_editor_absoluteX="130dp"
-                tools:layout_editor_absoluteY="300dp"
-                android:id="@+id/type_row"/>
+                android:layout_height="35dp"
+                android:text="PRICE" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="35dp"
+            android:layout_gravity="left">
 
             <TextView
+                android:id="@+id/dateTitle_row"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:text="Date"
+                android:textColor="@color/grey" />
+
+            <TextView
+                android:id="@+id/date_row"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PRICE"
-                tools:layout_editor_absoluteX="100dp"
-                tools:layout_editor_absoluteY="274dp"
-                android:id="@+id/price_row"/>
+                android:layout_height="35dp"
+                android:text="DATE" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="35dp"
+            android:layout_gravity="left"
+            android:paddingTop="5dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DATE"
-                tools:layout_editor_absoluteX="312dp"
-                tools:layout_editor_absoluteY="500dp"
-                android:id="@+id/date_row"/>
-        </TableRow>
-
-        <TableRow>
+                android:id="@+id/memoTitle_row"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:text="Memo"
+                android:textColor="@color/grey" />
 
             <TextView
+                android:id="@+id/note_row"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="NOTE"
-                tools:layout_editor_absoluteX="257dp"
-                tools:layout_editor_absoluteY="383dp"
-                android:id="@+id/note_row"/>
+                android:layout_height="35dp"
+                android:text="NOTE" />
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
     </TableLayout>
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/edit_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/table_id"
+        android:layout_alignEnd="@+id/table_id"
+        android:layout_alignRight="@+id/table_id"
+        android:layout_marginTop="-26dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
+        app:backgroundTint="@color/yellow"
+        app:srcCompat="@android:drawable/ic_menu_edit" />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/delete_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/table_id"
+        android:layout_alignLeft="@+id/table_id"
+        android:layout_alignBottom="@+id/table_id"
+        android:layout_marginStart="-20dp"
+        android:layout_marginLeft="-20dp"
+        android:layout_marginBottom="-44dp"
+        app:srcCompat="@drawable/ic_delete_black_24dp"
+        app:backgroundTint="@color/red"/>
+
+</RelativeLayout>

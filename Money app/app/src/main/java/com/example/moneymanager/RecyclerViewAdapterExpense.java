@@ -93,30 +93,6 @@ public class RecyclerViewAdapterExpense extends RecyclerView.Adapter<RecyclerVie
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setCancelable(true);
-                builder.setTitle("Delete");
-                builder.setMessage("Are you sure you want to delete this category all your data will be lost");
-                builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                db = AppDatabase.getInstance(context);
-                                ExpensesAndIncomes item = db.expensesAndIncomeDAO().findById(data.get(position).getId());
-                                db.expensesAndIncomeDAO().delete(item);
-                            }
-                        });
-                    }
-                });
-                builder.show();*/
                 Intent intent = new Intent(context, Details.class);
                 int id = data.get(position).getId();
                 intent.putExtra("id", id);
