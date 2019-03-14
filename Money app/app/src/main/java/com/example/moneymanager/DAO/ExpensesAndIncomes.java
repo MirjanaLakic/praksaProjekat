@@ -35,6 +35,9 @@ public class ExpensesAndIncomes {
         this.category = category;
     }
 
+    @Ignore
+    public ExpensesAndIncomes() { }
+
     public int getId() {
         return id;
     }

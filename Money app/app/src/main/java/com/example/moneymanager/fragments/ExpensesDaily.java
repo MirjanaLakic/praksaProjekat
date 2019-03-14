@@ -43,7 +43,6 @@ import java.util.Locale;
 public class ExpensesDaily extends Fragment {
 
     private View view;
-    private FloatingActionButton add;
     private RecyclerViewAdapterExpense recyclerViewAdapter;
     private RecyclerView recyclerView;
     List<ExpensesAndIncomes> list;
@@ -73,15 +72,6 @@ public class ExpensesDaily extends Fragment {
         recyclerViewAdapter = new RecyclerViewAdapterExpense(getContext(), list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerViewAdapter);
-
-        add = (FloatingActionButton) view.findViewById(R.id.add_expense);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddNewExpense.class);
-                startActivity(intent);
-            }
-        });
         return view;
     }
     private void getList() {
@@ -142,7 +132,8 @@ public class ExpensesDaily extends Fragment {
                 //create pie data object
                 PieData pieData = new PieData(pieDataSet);
                 pieDaily.setData(pieData);
-                pieDaily.setCenterText("Today\n"+ finalSum +"\nExpenses" );
+                pieDaily.setCenterText("Daily \n Expenses \n"+ finalSum);
+                pieDaily.setTouchEnabled(false);
                 pieDaily.invalidate();
 
             }

@@ -126,6 +126,7 @@ public class ExpensesWeekly extends Fragment {
                     }
                     if (sum != 0) {
                         yEntry.add(new PieEntry(sum, i));
+                        finalSum += sum;
                     }
                 }
                 //create the data set
@@ -135,6 +136,8 @@ public class ExpensesWeekly extends Fragment {
                 pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
                 //create pie data object
                 PieData pieData = new PieData(pieDataSet);
+                pieDaily.setCenterText("Weekly \n Expenses \n"+ finalSum);
+                pieDaily.setTouchEnabled(false);
                 pieDaily.setData(pieData);
                 pieDaily.invalidate();
 
@@ -148,8 +151,7 @@ public class ExpensesWeekly extends Fragment {
         pieDaily.setRotationEnabled(true);
         pieDaily.setHoleRadius(70f);
         pieDaily.setTransparentCircleAlpha(0);
-        pieDaily.setCenterText("Today\n Expenses" );
-        pieDaily.setCenterTextSize(10);
+        pieDaily.setCenterTextSize(15);
         pieDaily.getDescription().setEnabled(false);
         pieDaily.getLegend().setEnabled(false);
         addDataToChart();

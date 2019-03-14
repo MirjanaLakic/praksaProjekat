@@ -1,11 +1,13 @@
 package com.example.moneymanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.moneymanager.fragments.ExpensesDaily;
@@ -13,7 +15,7 @@ import com.example.moneymanager.fragments.ExpensesMonthly;
 import com.example.moneymanager.fragments.ExpensesWeekly;
 import com.example.moneymanager.fragments.ExpensesYearly;
 
-public class ExpensesActivity extends AppCompatActivity {
+public class ExpensesActivity extends AppCompatActivity{
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -50,9 +52,24 @@ public class ExpensesActivity extends AppCompatActivity {
         // When the home button is pressed, take the user back to the MoneyManager
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
+        }else if (id == R.id.add_income){
+            Intent intent = new Intent(getApplicationContext(), AddNewExpense.class);
+            intent.putExtra("item", "INCOME");
+            startActivity(intent);
+        }else if (id == R.id.add_expense){
+            Intent intent = new Intent(getApplicationContext(), AddNewExpense.class);
+            intent.putExtra("item", "EXPENSE");
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
     public ExpensesActivity(){ }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.expense_menu, menu);
+        return true;
+    }
+
 }

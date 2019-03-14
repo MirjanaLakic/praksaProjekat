@@ -49,8 +49,12 @@ public class AddNewExpense extends AppCompatActivity {
     public void onSaveButtonClicked(){
         String memoStr = memo.getText().toString();
         float priceint = Integer.parseInt(price.getText().toString());
+        final ExpensesAndIncomes obj;
         Date date = new Date();
-        final ExpensesAndIncomes obj = new ExpensesAndIncomes(memoStr, priceint, date, "EXPENSE", 2);
+        if (getIntent().getStringExtra("item").equals("EXPENSE")){
+            obj = new ExpensesAndIncomes(memoStr, priceint, date, "EXPENSE", 2);
+        }else
+            obj = new ExpensesAndIncomes(memoStr, priceint, date, "INCOME", 2);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
