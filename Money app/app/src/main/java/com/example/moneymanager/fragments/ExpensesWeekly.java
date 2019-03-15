@@ -74,7 +74,7 @@ public class ExpensesWeekly extends Fragment {
         String seventhDay = dateFormat.format(date2);
         String[] str = seventhDay.split("/");
         final int sevenDays = Integer.valueOf(str[0]);
-        LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAll();
+        LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAllExpenses();
         tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
             @Override
             public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
@@ -87,6 +87,7 @@ public class ExpensesWeekly extends Fragment {
                         l.add(lista.get(i));
                     }
                 }
+
                 recyclerViewAdapter.setList(l);
                 yEntry.clear();
                 xEntry.clear();
@@ -101,6 +102,7 @@ public class ExpensesWeekly extends Fragment {
     }
 
     private void addDataToChart(){
+        finalSum = 0;
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -7);
         Date date2 = calendar.getTime();
@@ -129,6 +131,11 @@ public class ExpensesWeekly extends Fragment {
                         finalSum += sum;
                     }
                 }
+
+                for (int i = 0; i < yEntry.size(); i++) {
+                    System.out.println(yEntry.get(i).getY());
+                }
+
                 //create the data set
                 PieDataSet pieDataSet = new PieDataSet(yEntry, "");
                 pieDataSet.setSliceSpace(0);

@@ -54,7 +54,7 @@ public class AddNewExpense extends AppCompatActivity {
         if (getIntent().getStringExtra("item").equals("EXPENSE")){
             obj = new ExpensesAndIncomes(memoStr, priceint, date, "EXPENSE", 2);
         }else
-            obj = new ExpensesAndIncomes(memoStr, priceint, date, "INCOME", 2);
+            obj = new ExpensesAndIncomes(memoStr, priceint, date, "INCOME", 4);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {

@@ -77,7 +77,7 @@ public class ExpensesDaily extends Fragment {
     private void getList() {
         Date date1 = new Date();
         final String date = dateFormat.format(date1);
-        LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAll();
+        LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAllExpenses();
         tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
             @Override
             public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
@@ -102,6 +102,7 @@ public class ExpensesDaily extends Fragment {
     }
 
     private void addDataToChart(){
+        finalSum = 0;
         Date date1 = new Date();
         final String date = dateFormat.format(date1);
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
