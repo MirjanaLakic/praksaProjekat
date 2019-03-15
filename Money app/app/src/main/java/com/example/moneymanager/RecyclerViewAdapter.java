@@ -30,6 +30,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.data = data;
     }
 
+    public RecyclerViewAdapter(Context context){
+        this.context = context;
+    }
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v;
