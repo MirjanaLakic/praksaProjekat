@@ -1,7 +1,6 @@
 package com.example.moneymanager;
 
 import android.app.AlertDialog;
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
@@ -28,10 +26,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public RecyclerViewAdapter(Context context, List<Category> data) {
         this.context = context;
         this.data = data;
-    }
-
-    public RecyclerViewAdapter(Context context){
-        this.context = context;
     }
 
     @Override

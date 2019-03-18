@@ -55,10 +55,12 @@ public class ExpensesActivity extends AppCompatActivity{
         }else if (id == R.id.add_income){
             Intent intent = new Intent(getApplicationContext(), AddNewExpense.class);
             intent.putExtra("item", "INCOME");
+            intent.putExtra("edit", "add");
             startActivity(intent);
         }else if (id == R.id.add_expense){
             Intent intent = new Intent(getApplicationContext(), AddNewExpense.class);
             intent.putExtra("item", "EXPENSE");
+            intent.putExtra("edit", "add");
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

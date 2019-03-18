@@ -132,10 +132,6 @@ public class ExpensesWeekly extends Fragment {
                     }
                 }
 
-                for (int i = 0; i < yEntry.size(); i++) {
-                    System.out.println(yEntry.get(i).getY());
-                }
-
                 //create the data set
                 PieDataSet pieDataSet = new PieDataSet(yEntry, "");
                 pieDataSet.setSliceSpace(0);

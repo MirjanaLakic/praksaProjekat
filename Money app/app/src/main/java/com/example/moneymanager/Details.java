@@ -1,7 +1,10 @@
 package com.example.moneymanager;
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +34,7 @@ public class Details extends AppCompatActivity {
     private ExpensesAndIncomes item;
     private static final String DATE_FORMAT = "dd/MM/yyy";
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+    private Category cat;
     FloatingActionButton edit;
     ActionMenuItemView delete;
 
@@ -38,9 +43,8 @@ public class Details extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_item);
-
-        int id = getIntent().getIntExtra("id", 0);
         db = AppDatabase.getInstance(this);
+        int id = getIntent().getIntExtra("id", 0);
         item = db.expensesAndIncomeDAO().findById(id);
 
         img = (ImageView) findViewById(R.id.img_row);
@@ -48,15 +52,30 @@ public class Details extends AppCompatActivity {
         date = (TextView) findViewById(R.id.date_row);
         category = (TextView) findViewById(R.id.category_row);
         price = (TextView) findViewById(R.id.price_row);
-        String dateformat = dateFormat.format(item.getDate());
-
-        Category cat = db.categoryDAO().findById(item.getCategory());
-
-        note.setText(item.getNote());
-        date.setText(dateformat);
-        img.setImageResource(cat.getPhoto());
-        category.setText(cat.getName());
-        price.setText(String.valueOf(item.getPrice()));
+        edit = (FloatingActionButton) findViewById(R.id.edit_item);
+        final String dateFinal = dateFormat.format(item.getDate());
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), AddNewExpense.class);
+                intent.putExtra("edit", "edit");
+                intent.putExtra("id", item.getId());
+                intent.putExtra("item", "edit");
+                startActivity(intent);
+            }
+        });
+        LiveData<ExpensesAndIncomes> oneItem = db.expensesAndIncomeDAO().findItem(id);
+        oneItem.observe(this, new Observer<ExpensesAndIncomes>() {
+            @Override
+            public void onChanged(@Nullable ExpensesAndIncomes edit) {
+                note.setText(edit.getNote());
+                date.setText(dateFinal);
+                cat = db.categoryDAO().findById(edit.getCategory());
+                img.setImageResource(cat.getPhoto());
+                category.setText(cat.getName());
+                price.setText(String.valueOf(edit.getPrice()));
+            }
+        });
     }
 
     @Override

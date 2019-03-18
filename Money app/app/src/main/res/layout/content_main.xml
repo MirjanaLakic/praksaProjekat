@@ -10,12 +10,6 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-<!--    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/contant_recyclerview">
-    </android.support.v7.widget.RecyclerView>-->
-
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_main"
         android:layout_width="357dp"
@@ -31,5 +25,37 @@
         android:layout_marginEnd="31dp"
         android:layout_marginRight="31dp">
     </com.github.mikephil.charting.charts.PieChart>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/bar_expenses_main"
+        android:layout_width="wrap_content"
+        android:layout_height="123dp"
+        android:layout_below="@+id/pie_main"
+        android:layout_alignStart="@+id/pie_main"
+        android:layout_alignLeft="@+id/pie_main"
+        android:layout_alignEnd="@+id/pie_main"
+        android:layout_alignRight="@+id/pie_main"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp">
+    </com.github.mikephil.charting.charts.BarChart>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/bar_incomes_main"
+        android:layout_width="wrap_content"
+        android:layout_height="123dp"
+        android:layout_below="@+id/bar_expenses_main"
+        android:layout_alignStart="@+id/bar_expenses_main"
+        android:layout_alignLeft="@+id/bar_expenses_main"
+        android:layout_alignEnd="@+id/bar_expenses_main"
+        android:layout_alignRight="@+id/bar_expenses_main"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp">
+    </com.github.mikephil.charting.charts.BarChart>
 
 </RelativeLayout>
