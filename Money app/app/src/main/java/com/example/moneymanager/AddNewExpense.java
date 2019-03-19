@@ -1,26 +1,16 @@
 package com.example.moneymanager;
 
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
-import com.example.moneymanager.DAO.DateConverter;
-import com.example.moneymanager.DAO.ExpensesAndIncomeDAO;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,10 +19,6 @@ public class AddNewExpense extends AppCompatActivity {
     private EditText memo;
     private EditText price;
     private Button add;
-    private RecyclerView recyclerView;
-    private RecyclerViewIcons recyclerViewAdapter;
-    private ViewPager viewPager;
-    private ViewPagerAdapter viewPagerAdapter;
     List<Category> list;
     AppDatabase db;
 
@@ -41,12 +27,6 @@ public class AddNewExpense extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_expense);
         db = AppDatabase.getInstance(getApplicationContext());
-
-        viewPager = (ViewPager) findViewById(R.id.pager_icon);
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(viewPagerAdapter);
-        list = db.categoryDAO().loadIcons();
-        recyclerViewAdapter = new RecyclerViewIcons(getApplicationContext(), list);
         initViews();
     }
 

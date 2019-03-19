@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.example.moneymanager.AddExpenseCategory;
+import com.example.moneymanager.AddCategory;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.R;
@@ -43,7 +43,7 @@ public class CategoryExpenses extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.category_expenses, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.expenses_recyclerview);
         recyclerViewAdapter = new RecyclerViewAdapter(getContext(), listCategory);
@@ -54,7 +54,8 @@ public class CategoryExpenses extends Fragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddExpenseCategory.class);
+                Intent intent = new Intent(getActivity(), AddCategory.class);
+                intent.putExtra("type", "EXPENSES");
                 startActivity(intent);
             }
         });

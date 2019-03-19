@@ -28,22 +28,6 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".AddIncomeCategory"
-            android:label="Add income category"
-            android:parentActivityName=".CategoriesActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CategoriesActivity" />
-        </activity>
-        <activity
-            android:name=".AddExpenseCategory"
-            android:label="Add expense category"
-            android:parentActivityName=".CategoriesActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CategoriesActivity" />
-        </activity>
-        <activity
             android:name=".ExpensesActivity"
             android:label="@string/expenses"
             android:parentActivityName=".MainActivity">
@@ -66,6 +50,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ExpensesActivity" />
+        </activity>
+        <activity
+            android:name=".AddCategory"
+            android:label="Add category"
+            android:parentActivityName=".CategoriesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CategoriesActivity" />
         </activity>
     </application>
 
