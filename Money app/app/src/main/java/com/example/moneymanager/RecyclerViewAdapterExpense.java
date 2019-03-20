@@ -1,8 +1,12 @@
 package com.example.moneymanager;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +19,7 @@ import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,4 +106,5 @@ public class RecyclerViewAdapterExpense extends RecyclerView.Adapter<RecyclerVie
         data = list;
         notifyDataSetChanged();
     }
+
 }

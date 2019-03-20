@@ -62,7 +62,6 @@ public class ExpensesYearly extends Fragment {
 
         return view;
     }
-
     private void getList() {
         Date date2 = new Date();
         String seventhDay = dateFormat.format(date2);

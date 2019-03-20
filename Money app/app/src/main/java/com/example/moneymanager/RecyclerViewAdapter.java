@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
+import com.example.moneymanager.DAO.ExpensesAndIncomes;
 
 import java.util.List;
 
@@ -100,7 +101,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                             public void run() {
                                 db = AppDatabase.getInstance(context);
                                 Category category = db.categoryDAO().findById(data.get(position).getId());
+                                List<ExpensesAndIncomes> toDelete = db.expensesAndIncomeDAO().getExpensesForOneCategory(category.getId());
+                                for (int i = 0; i < toDelete.size(); i++) {
+                                    ExpensesAndIncomes item = db.expensesAndIncomeDAO().findById(toDelete.get(i).getId());
+                                    db.expensesAndIncomeDAO().delete(item);
+                                }
                                 db.categoryDAO().deleteCateogry(category);
+
                             }
                         });
                     }

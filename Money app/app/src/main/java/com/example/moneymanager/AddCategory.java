@@ -68,6 +68,9 @@ public class AddCategory extends AppCompatActivity implements Icon {
         if (name.getText().toString().equals("")){
             Toast.makeText(getApplicationContext(), "Please Enter Name", Toast.LENGTH_SHORT).show();
         }else {
+            if (pos == 0){
+                pos = icons.get(0);
+            }
             category = new Category(name.getText().toString(), pos, getIntent().getStringExtra("type"));
             db = AppDatabase.getInstance(getApplicationContext());
             db.categoryDAO().addCategory(category);

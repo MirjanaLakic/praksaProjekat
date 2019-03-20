@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface ExpensesAndIncomeDAO {
 
-    @Query("SELECT * FROM ExpensesAndIncomes WHERE type = 'EXPENSE'")
+    @Query("SELECT * FROM ExpensesAndIncomes WHERE type = 'EXPENSES'")
     LiveData<List<ExpensesAndIncomes>> getAllExpenses();
 
     @Query("SELECT * FROM ExpensesAndIncomes WHERE type = 'INCOME'")

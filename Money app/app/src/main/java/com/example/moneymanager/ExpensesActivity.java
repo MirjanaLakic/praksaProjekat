@@ -59,7 +59,7 @@ public class ExpensesActivity extends AppCompatActivity{
             startActivity(intent);
         }else if (id == R.id.add_expense){
             Intent intent = new Intent(getApplicationContext(), AddNewExpense.class);
-            intent.putExtra("item", "EXPENSE");
+            intent.putExtra("item", "EXPENSES");
             intent.putExtra("edit", "add");
             startActivity(intent);
         }

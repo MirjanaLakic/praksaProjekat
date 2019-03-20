@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.moneymanager.CategoriesActivity;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
@@ -37,7 +33,6 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -86,8 +81,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
         barChart = (BarChart) findViewById(R.id.bar_expenses_main);
-        barChartIncome = (BarChart) findViewById(R.id.bar_incomes_main);
         setBarEx();
+        barChartIncome = (BarChart) findViewById(R.id.bar_incomes_main);
         setBarIn();
     }
 

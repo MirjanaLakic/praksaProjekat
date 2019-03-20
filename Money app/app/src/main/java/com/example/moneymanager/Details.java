@@ -60,7 +60,8 @@ public class Details extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), AddNewExpense.class);
                 intent.putExtra("edit", "edit");
                 intent.putExtra("id", item.getId());
-                intent.putExtra("item", "edit");
+                Category category1 = db.categoryDAO().findById(item.getCategory());
+                intent.putExtra("item", category1.getType());
                 startActivity(intent);
             }
         });
@@ -68,12 +69,14 @@ public class Details extends AppCompatActivity {
         oneItem.observe(this, new Observer<ExpensesAndIncomes>() {
             @Override
             public void onChanged(@Nullable ExpensesAndIncomes edit) {
-                note.setText(edit.getNote());
-                date.setText(dateFinal);
-                cat = db.categoryDAO().findById(edit.getCategory());
-                img.setImageResource(cat.getPhoto());
-                category.setText(cat.getName());
-                price.setText(String.valueOf(edit.getPrice()));
+                if (edit != null) {
+                    note.setText(edit.getNote());
+                    date.setText(dateFinal);
+                    cat = db.categoryDAO().findById(edit.getCategory());
+                    img.setImageResource(cat.getPhoto());
+                    category.setText(cat.getName());
+                    price.setText(String.valueOf(edit.getPrice()));
+                }
             }
         });
     }
@@ -90,6 +93,7 @@ public class Details extends AppCompatActivity {
 
         if (id == R.id.delete_item) {
             deleteItem(id);
+
         }
         return super.onOptionsItemSelected(item);
     }

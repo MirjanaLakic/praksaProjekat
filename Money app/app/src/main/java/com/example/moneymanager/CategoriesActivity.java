@@ -7,20 +7,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.moneymanager.fragments.CategoryExpenses;
 import com.example.moneymanager.fragments.CategoryIncome;
 
 public class CategoriesActivity extends AppCompatActivity {
 
-    private View view;
     private TabLayout tabLayout;
     private ViewPagerAdapter viewPagerAdapter;
     private ViewPager viewPager;
-    ImageButton delete;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

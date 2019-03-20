@@ -4,9 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,20 +18,13 @@ import com.example.moneymanager.DAO.ExpensesAndIncomes;
 import com.example.moneymanager.R;
 import com.example.moneymanager.RecyclerViewAdapterExpense;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -81,18 +72,17 @@ public class ExpensesMonthly extends Fragment {
         tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
             @Override
             public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
-                List<ExpensesAndIncomes> l = new ArrayList<>();
-                for (int i = 0; i < lista.size(); i++) {
-                    String dateFromLista = dateFormat.format(lista.get(i).getDate());
-                    String[] parse = dateFromLista.split("/");
-                    int parseInt = Integer.valueOf(parse[1]);
-                    if (sevenDays <= parseInt){
-                        l.add(lista.get(i));
-                    }
+            List<ExpensesAndIncomes> l = new ArrayList<>();
+            for (int i = 0; i < lista.size(); i++) {
+                String dateFromLista = dateFormat.format(lista.get(i).getDate());
+                String[] parse = dateFromLista.split("/");
+                int parseInt = Integer.valueOf(parse[1]);
+                if (sevenDays <= parseInt){
+                    l.add(lista.get(i));
                 }
-
-                recyclerViewAdapter.setList(l);
-                addDataToChart();
+            }
+            recyclerViewAdapter.setList(l);
+            addDataToChart();
             }
         });
     }

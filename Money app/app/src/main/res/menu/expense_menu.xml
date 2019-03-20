@@ -14,5 +14,4 @@
         android:orderInCategory="100"
         android:title="@string/add_income"
         app:showAsAction="never" />
-
 </menu>
