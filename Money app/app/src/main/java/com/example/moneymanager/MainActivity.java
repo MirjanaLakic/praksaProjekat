@@ -133,7 +133,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             return true;
         } else if (id == R.id.nav_slideshow) {
-
+            Intent intent = new Intent(this, AddReminder.class);
+            startActivity(intent);
+            return true;
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -375,6 +377,10 @@ public class MainActivity extends AppCompatActivity
         barChartIncome.setDrawValueAboveBar(false);
         barChartIncome.setTouchEnabled(false);
         addDataToBarIn();
+    }
+
+    public void testNotification(View view){
+        NotificationUtils.remindUSer(this);
     }
 
 }

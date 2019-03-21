@@ -66,22 +66,25 @@ public class ExpensesYearly extends Fragment {
         Date date2 = new Date();
         String seventhDay = dateFormat.format(date2);
         String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[1]);
+        final int sevenDays = Integer.valueOf(str[2]);
         LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAllExpenses();
         tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
             @Override
             public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
-                List<ExpensesAndIncomes> l = new ArrayList<>();
-                for (int i = 0; i < lista.size(); i++) {
-                    String dateFromLista = dateFormat.format(lista.get(i).getDate());
-                    String[] parse = dateFromLista.split("/");
-                    int parseInt = Integer.valueOf(parse[1]);
-                    if (sevenDays <= parseInt){
-                        l.add(lista.get(i));
+                if (lista.size() != 0) {
+                    List<ExpensesAndIncomes> l = new ArrayList<>();
+                    for (int i = 0; i < lista.size(); i++) {
+                        String dateFromLista = dateFormat.format(lista.get(i).getDate());
+                        String[] parse = dateFromLista.split("/");
+                        int parseInt = Integer.valueOf(parse[2]);
+                        if (sevenDays <= parseInt) {
+                            l.add(lista.get(i));
+                        }
                     }
-                }
 
-                recyclerViewAdapter.setList(l);
+                    recyclerViewAdapter.setList(l);
+
+                }
                 addDataToChart();
             }
         });
@@ -93,55 +96,74 @@ public class ExpensesYearly extends Fragment {
         String[] str = seventhDay.split("/");
         final int sevenDays = Integer.valueOf(str[2]);
         final LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
-        tasks.observe(this, new Observer<List<Category>>() {
-            @Override
-            public void onChanged(@Nullable List<Category> lista) {
-                float sum = 0;
-                int month = 0;
-                xEntry.clear();
-                yEntry.clear();
-                for (int i = 0; i < lista.size(); i++) {
+        if (tasks != null) {
+            tasks.observe(this, new Observer<List<Category>>() {
+                @Override
+                public void onChanged(@Nullable List<Category> lista) {
+                    int month = 0;
+                    float sum = 0;
+                    if (lista.size() != 0) {
+                        xEntry.clear();
+                        yEntry.clear();
+                        for (int i = 0; i < lista.size(); i++) {
+                            List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
+                            if (categoryExpesess.size() != 0) {
+                                for (int j = 0; j < categoryExpesess.size(); j++) {
+                                    String dateFromLista = dateFormat.format(categoryExpesess.get(j).getDate());
+                                    String[] parse = dateFromLista.split("/");
+                                    int parseInt = Integer.valueOf(parse[2]);
+                                    month = parseInt;
+                                    if (sevenDays == parseInt) {
+                                        sum += categoryExpesess.get(j).getPrice();
+                                    }
 
-                    List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
-                    for (int j = 0; j < categoryExpesess.size(); j++) {
-                        String dateFromLista = dateFormat.format(categoryExpesess.get(j).getDate());
-                        String[] parse = dateFromLista.split("/");
-                        int parseInt = Integer.valueOf(parse[2]);
-                        month = parseInt;
-                        if (sevenDays == parseInt){
-                            sum += categoryExpesess.get(j).getPrice();
+                                }
+                            }
+                        }
+                        if (sum != 0) {
+                            yEntry.add(new Entry(month, sum));
                         }
 
-                    }
+                        List<Category> item = db.categoryDAO().loadIncomes();
 
-                }
-                if (sum != 0) {
-                    yEntry.add(new Entry(month, sum));
-                }
+                        float sum1 = 0;
+                        int month1 = 0;
+                        if (item.size() != 0) {
+                            for (int i = 0; i < item.size(); i++) {
+                                List<ExpensesAndIncomes> categoryIncome = db.expensesAndIncomeDAO().getExpensesForOneCategory(item.get(i).getId());
+                                for (int j = 0; j < categoryIncome.size(); j++) {
+                                    String dateFromLista = dateFormat.format(categoryIncome.get(j).getDate());
+                                    String[] parse = dateFromLista.split("/");
+                                    int parseInt1 = Integer.valueOf(parse[2]);
+                                    month1 = parseInt1;
+                                    if (sevenDays == parseInt1) {
+                                        sum1 += categoryIncome.get(j).getPrice();
+                                    }
+                                }
 
-                List<Category> item = db.categoryDAO().loadIncomes();
-
-                float sum1 = 0;
-                int month1 = 0;
-                for (int i = 0; i < item.size(); i++) {
-                    List<ExpensesAndIncomes> categoryIncome = db.expensesAndIncomeDAO().getExpensesForOneCategory(item.get(i).getId());
-                    for (int j = 0; j < categoryIncome.size(); j++) {
-                        String dateFromLista = dateFormat.format(categoryIncome.get(j).getDate());
-                        String[] parse = dateFromLista.split("/");
-                        int parseInt1 = Integer.valueOf(parse[2]);
-                        month1 = parseInt1;
-                        if (sevenDays == parseInt1){
-                            sum1 += categoryIncome.get(j).getPrice();
+                            }
+                            if (sum1 != 0) {
+                                xEntry.add(new Entry(month1, sum1));
+                                if (month == 0 && sum == 0){
+                                    yEntry.add(new Entry(month1, sum));
+                                }else {
+                                    yEntry.add(new Entry(month, sum));
+                                }
+                                setChart(xEntry, yEntry);
+                            }
+                        } else {
+                            xEntry.add(new Entry(month, 0));
+                            if (month == 0 && sum == 0){
+                                yEntry.add(new Entry(month1, sum));
+                            }else {
+                                yEntry.add(new Entry(month, sum));
+                            }
+                            setChart(xEntry, yEntry);
                         }
                     }
-
                 }
-                if (sum1 != 0) {
-                    xEntry.add(new Entry(month1, sum1));
-                }
-                setChart(xEntry, yEntry);
-            }
-        });
+            });
+        }
     }
 
     private void setChart(ArrayList<Entry> xEntry, ArrayList<Entry> yEntry) {

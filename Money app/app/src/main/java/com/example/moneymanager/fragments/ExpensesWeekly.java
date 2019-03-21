@@ -62,9 +62,6 @@ public class ExpensesWeekly extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.weekly_expenses, container, false);
 
-        setBudget();
-        setBalance();
-
         recyclerView = (RecyclerView) view.findViewById(R.id.week_recyclerview);
         recyclerViewAdapter = new RecyclerViewAdapterExpense(getContext(), list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -93,6 +90,8 @@ public class ExpensesWeekly extends Fragment {
                 }
 
                 recyclerViewAdapter.setList(l);
+                setBudget();
+                setBalance();
                 yEntry.clear();
                 xEntry.clear();
                 setPieChart();

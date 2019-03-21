@@ -59,9 +59,6 @@ public class ExpensesDaily extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.daily_expenses, container, false);
 
-        setBudget();
-        setBalance();
-
         recyclerView = (RecyclerView) view.findViewById(R.id.day_recyclerview);
         recyclerViewAdapter = new RecyclerViewAdapterExpense(getContext(), list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -84,6 +81,8 @@ public class ExpensesDaily extends Fragment {
                         }
                 }
                 recyclerViewAdapter.setList(l);
+                setBudget();
+                setBalance();
                 yEntry.clear();
                 xEntry.clear();
                 setPieChart();
@@ -153,26 +152,31 @@ public class ExpensesDaily extends Fragment {
         String seventhDay = dateFormat.format(date2);
         String[] str = seventhDay.split("/");
         final int sevenDays = Integer.valueOf(str[1]);
-        LiveData<List<ExpensesAndIncomes>> list = db.expensesAndIncomeDAO().getAllIncome();
+        final LiveData<List<ExpensesAndIncomes>> list = db.expensesAndIncomeDAO().getAllIncome();
         list.observe(this, new Observer<List<ExpensesAndIncomes>>() {
             @Override
             public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
-                int sum = 0;
-                List<ExpensesAndIncomes> l = new ArrayList<>();
-                for (int i = 0; i < lista.size(); i++) {
-                    String dateFromLista = dateFormat.format(lista.get(i).getDate());
-                    String[] parse = dateFromLista.split("/");
-                    int parseInt = Integer.valueOf(parse[1]);
-                    if (sevenDays <= parseInt) {
-                        l.add(lista.get(i));
+                if (lista.size() != 0) {
+                    int sum = 0;
+                    List<ExpensesAndIncomes> l = new ArrayList<>();
+                    for (int i = 0; i < lista.size(); i++) {
+                        String dateFromLista = dateFormat.format(lista.get(i).getDate());
+                        String[] parse = dateFromLista.split("/");
+                        int parseInt = Integer.valueOf(parse[1]);
+                        if (sevenDays <= parseInt) {
+                            l.add(lista.get(i));
+                        }
                     }
+                    for (int i = 0; i < l.size(); i++) {
+                        sum += l.get(i).getPrice();
+                    }
+                    budget = (TextView) view.findViewById(R.id.budget);
+                    String s = Float.toString(sum);
+                    budget.setText("Budget: " + s);
+                }else {
+                    budget = (TextView) view.findViewById(R.id.budget);
+                    budget.setText("Budget: 0.0");
                 }
-                for (int i = 0; i < l.size(); i++) {
-                    sum += l.get(i).getPrice();
-                }
-                budget = (TextView) view.findViewById(R.id.budget);
-                String s = Float.toString(sum);
-                budget.setText("Budget: " + s);
             }
         });
     }
@@ -186,48 +190,50 @@ public class ExpensesDaily extends Fragment {
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(@Nullable List<Category> lista) {
-                float sum = 0;
-                xEntry.clear();
-                yEntry.clear();
-                for (int i = 0; i < lista.size(); i++) {
+                if (lista.size() != 0) {
+                    float sum = 0;
+                    xEntry.clear();
+                    yEntry.clear();
+                    for (int i = 0; i < lista.size(); i++) {
 
-                    List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
-                    for (int j = 0; j < categoryExpesess.size(); j++) {
-                        String dateFromLista = dateFormat.format(categoryExpesess.get(j).getDate());
-                        String[] parse = dateFromLista.split("/");
-                        int parseInt = Integer.valueOf(parse[1]);
-                        if (sevenDays == parseInt){
-                            sum += categoryExpesess.get(j).getPrice();
+                        List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
+                        for (int j = 0; j < categoryExpesess.size(); j++) {
+                            String dateFromLista = dateFormat.format(categoryExpesess.get(j).getDate());
+                            String[] parse = dateFromLista.split("/");
+                            int parseInt = Integer.valueOf(parse[1]);
+                            if (sevenDays == parseInt) {
+                                sum += categoryExpesess.get(j).getPrice();
+                            }
+
                         }
 
                     }
 
-                }
+                    List<Category> item = db.categoryDAO().loadIncomes();
 
-                List<Category> item = db.categoryDAO().loadIncomes();
-
-                float budget = 0;
-                for (int i = 0; i < item.size(); i++) {
-                    List<ExpensesAndIncomes> categoryIncome = db.expensesAndIncomeDAO().getExpensesForOneCategory(item.get(i).getId());
-                    for (int j = 0; j < categoryIncome.size(); j++) {
-                        String dateFromLista = dateFormat.format(categoryIncome.get(j).getDate());
-                        String[] parse = dateFromLista.split("/");
-                        int parseInt1 = Integer.valueOf(parse[1]);
-                        if (sevenDays == parseInt1){
-                            budget += categoryIncome.get(j).getPrice();
+                    float budget = 0;
+                    for (int i = 0; i < item.size(); i++) {
+                        List<ExpensesAndIncomes> categoryIncome = db.expensesAndIncomeDAO().getExpensesForOneCategory(item.get(i).getId());
+                        for (int j = 0; j < categoryIncome.size(); j++) {
+                            String dateFromLista = dateFormat.format(categoryIncome.get(j).getDate());
+                            String[] parse = dateFromLista.split("/");
+                            int parseInt1 = Integer.valueOf(parse[1]);
+                            if (sevenDays == parseInt1) {
+                                budget += categoryIncome.get(j).getPrice();
+                            }
                         }
-                    }
 
+                    }
+                    float finalBalance = budget - sum;
+                    balance = (TextView) view.findViewById(R.id.balance);
+                    if (finalBalance >= 0) {
+                        balance.setTextColor(Color.GREEN);
+                    } else {
+                        balance.setTextColor(Color.RED);
+                    }
+                    String s = Float.toString(finalBalance);
+                    balance.setText("Balance: " + s);
                 }
-                float finalBalance = budget - sum;
-                balance = (TextView) view.findViewById(R.id.balance);
-                if (finalBalance >= 0){
-                    balance.setTextColor(Color.GREEN);
-                }else {
-                    balance.setTextColor(Color.RED);
-                }
-                String s = Float.toString(finalBalance);
-                balance.setText("Balance: "+s);
             }
         });
     }
