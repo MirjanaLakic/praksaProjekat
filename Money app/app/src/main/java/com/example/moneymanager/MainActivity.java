@@ -2,10 +2,13 @@ package com.example.moneymanager;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.moneymanager.DAO.AppDatabase;
@@ -33,9 +37,12 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,20 +66,11 @@ public class MainActivity extends AppCompatActivity
     private BarChart barChart;
     private BarChart barChartIncome;
     private FirebaseAuth auth;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
-
-        if (currentUser == null){
-            Intent intent = new Intent(this, EmailPasswordActivity.class);
-            startActivity(intent);
-        }else {
-            setUser(currentUser);
-        }
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,8 +82,12 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        getUser();
+
+
         pieChart = (PieChart) findViewById(R.id.pie_main);
         setPieChart();
 
@@ -102,6 +104,17 @@ public class MainActivity extends AppCompatActivity
         setBarIn();
     }
 
+    public void getUser(){
+        auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null){
+            Intent intent = new Intent(this, EmailPasswordActivity.class);
+            startActivity(intent);
+        }else {
+            setUser(currentUser);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -110,6 +123,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUser();
     }
 
     @Override
@@ -153,15 +172,11 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             return true;
         } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_send) {
+            auth.signOut();
             Intent intent = new Intent(this, EmailPasswordActivity.class);
             startActivity(intent);
-            return true;
-        } else if (id == R.id.nav_share) {
-            Intent intent = new Intent(this, GoogleSignInActivity.class);
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -404,7 +419,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUser(FirebaseUser currentUser){
-        System.out.println(currentUser.getEmail());
+        View headView = navigationView.getHeaderView(0);
+        TextView gmail = headView.findViewById(R.id.textView_email);
+        gmail.setText(currentUser.getEmail());
+        ImageView imageView = headView.findViewById(R.id.imageView_email);
+        try {
+            Picasso.with(this).load(currentUser.getPhotoUrl()).into(imageView);
+        }catch (NullPointerException e){
+        }
+
     }
 
 }

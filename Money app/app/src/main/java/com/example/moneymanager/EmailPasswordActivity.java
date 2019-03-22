@@ -309,4 +309,10 @@ public class EmailPasswordActivity extends BaseActivity implements
             signInWithGoogle();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        moveTaskToBack(true);
+    }
 }
