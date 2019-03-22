@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
@@ -62,12 +63,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+
+        if (currentUser == null){
+            Intent intent = new Intent(this, EmailPasswordActivity.class);
+            startActivity(intent);
+        }else {
+            setUser(currentUser);
+        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-/*        FirebaseApp.initializeApp(getApplicationContext());
-        auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -144,11 +153,13 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             return true;
         } else if (id == R.id.nav_manage) {
-            Intent intent = new Intent(this, bzvz.class);
+            Intent intent = new Intent(this, EmailPasswordActivity.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.nav_share) {
-
+            Intent intent = new Intent(this, GoogleSignInActivity.class);
+            startActivity(intent);
+            return true;
         } else if (id == R.id.nav_send) {
 
         }
@@ -390,6 +401,10 @@ public class MainActivity extends AppCompatActivity
 
     public void testNotification(View view){
         NotificationUtils.remindUSer(this);
+    }
+
+    private void setUser(FirebaseUser currentUser){
+        System.out.println(currentUser.getEmail());
     }
 
 }

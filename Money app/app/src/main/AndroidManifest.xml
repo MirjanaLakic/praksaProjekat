@@ -3,6 +3,7 @@
     package="com.example.moneymanager">
 
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -72,12 +73,12 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".bzvz"
-            android:label="@string/reminder_name"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+            android:name=".EmailPasswordActivity"
+            android:label="@string/sign_in">
+        </activity>
+        <activity
+            android:name=".GoogleSignInActivity"
+            android:label="@string/sign_in">
         </activity>
     </application>
 
