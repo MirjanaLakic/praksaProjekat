@@ -78,9 +78,6 @@ public class EmailPasswordActivity extends BaseActivity implements
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
     }
     // [END on_start_check_user]
 
@@ -99,7 +96,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
                 // [START_EXCLUDE]
-                updateUI(null);
                 // [END_EXCLUDE]
             }
         }
@@ -127,7 +123,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
 
                         // [START_EXCLUDE]
@@ -162,7 +157,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
 
                         // [START_EXCLUDE]
@@ -195,7 +189,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
 
                         // [START_EXCLUDE]
@@ -207,11 +200,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                     }
                 });
         // [END sign_in_with_email]
-    }
-
-    private void signOut() {
-        mAuth.signOut();
-        updateUI(null);
     }
 
     private void sendEmailVerification() {
@@ -267,27 +255,6 @@ public class EmailPasswordActivity extends BaseActivity implements
         return valid;
     }
 
-    private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
-        if (user != null) {
-            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
-                    user.getEmail(), user.isEmailVerified()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
-            findViewById(R.id.emailPasswordButtons).setVisibility(View.GONE);
-            findViewById(R.id.emailPasswordFields).setVisibility(View.GONE);
-            findViewById(R.id.signedInButtons).setVisibility(View.VISIBLE);
-
-            findViewById(R.id.verifyEmailButton).setEnabled(!user.isEmailVerified());
-        } else {
-            mStatusTextView.setText(R.string.signed_out);
-            mDetailTextView.setText(null);
-
-            findViewById(R.id.emailPasswordButtons).setVisibility(View.VISIBLE);
-            findViewById(R.id.emailPasswordFields).setVisibility(View.VISIBLE);
-            findViewById(R.id.signedInButtons).setVisibility(View.GONE);
-        }
-    }
 
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -302,7 +269,6 @@ public class EmailPasswordActivity extends BaseActivity implements
         } else if (i == R.id.emailSignInButton) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.signOutButton) {
-            signOut();
         } else if (i == R.id.verifyEmailButton) {
             sendEmailVerification();
         } else if (i == R.id.signInButtonGoogle) {
