@@ -18,13 +18,24 @@ import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.R;
 import com.example.moneymanager.RecyclerViewAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CategoryExpenses extends Fragment {
 
 
     private AppDatabase db;
+    private FirebaseFirestore firedb;
+    private FirebaseAuth auth;
     private RecyclerViewAdapter recyclerViewAdapter;
     View view;
     private RecyclerView recyclerView;
@@ -37,6 +48,8 @@ public class CategoryExpenses extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = AppDatabase.getInstance(getContext());
+        firedb = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
         retrieveExpenses();
     }
 

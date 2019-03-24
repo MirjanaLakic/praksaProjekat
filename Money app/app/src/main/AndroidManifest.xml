@@ -77,8 +77,8 @@
             android:label="@string/sign_in">
         </activity>
         <activity
-            android:name=".GoogleSignInActivity"
-            android:label="@string/sign_in">
+            android:name=".Proba"
+            android:label="Proba">
         </activity>
     </application>
 

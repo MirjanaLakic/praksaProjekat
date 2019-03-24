@@ -22,6 +22,9 @@ public interface CategoryDAO {
     List<Category> loadIncomes();
 
     @Query("SELECT * FROM Categories WHERE type = 'EXPENSES' ORDER BY id DESC")
+    List<Category> loadExpenses();
+
+    @Query("SELECT * FROM Categories WHERE type = 'EXPENSES' ORDER BY id DESC")
     List<Category> loadIcons();
 
     @Query("SELECT * FROM Categories WHERE type = 'INCOME' ORDER BY id DESC")
