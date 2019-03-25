@@ -8,7 +8,7 @@ import android.content.Context;
 import android.util.Log;
 
 
-@Database(entities = {Category.class, ExpensesAndIncomes.class, Reminder.class}, version = 4, exportSchema = false)
+@Database(entities = {Category.class, ExpensesAndIncomes.class, Reminder.class, TimeStamp.class}, version = 4, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -33,4 +33,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract CategoryDAO categoryDAO();
     public abstract ExpensesAndIncomeDAO expensesAndIncomeDAO();
     public abstract ReminderDAO reminderDAO();
+    public abstract TimeStampDAO timeStampDAO();
 }
