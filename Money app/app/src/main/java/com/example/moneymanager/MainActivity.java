@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -41,6 +42,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
@@ -482,34 +484,35 @@ public class MainActivity extends AppCompatActivity
                             TimeStamp obj = new TimeStamp(strTime);
                             db.timeStampDAO().addTimeStamp(obj);
                         }else {
-                            if (!strTime.equals(timeStamp.getTimeCategory())) {
-                                firedb.collection("Categories").document(currentUser.getEmail())
-                                        .collection("UserCategoriesExpenses").get()
-                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                List<Integer> idList = new ArrayList<>();
-                                                List<Category> list = db.categoryDAO().loadExpenses();
-                                                for (int i = 0; i < list.size(); i++) {
-                                                    idList.add(list.get(i).getId());
-                                                }
-                                                for (QueryDocumentSnapshot document : queryDocumentSnapshots){
-                                                    Category category = document.toObject(Category.class);
-                                                    if (!idList.contains(category.getId())){
-                                                        Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
-                                                        db.categoryDAO().addCategory(newCat);
+                            if (timeStamp.getTimeCategory() != null && strTime != null) {
+                                if (!strTime.equals(timeStamp.getTimeCategory())) {
+                                    firedb.collection("Categories").document(currentUser.getEmail())
+                                            .collection("UserCategoriesExpenses").get()
+                                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                    List<Integer> idList = new ArrayList<>();
+                                                    List<Category> list = db.categoryDAO().loadExpenses();
+                                                    for (int i = 0; i < list.size(); i++) {
+                                                        idList.add(list.get(i).getId());
+                                                    }
+                                                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                                        Category category = document.toObject(Category.class);
+                                                        if (!idList.contains(category.getId())) {
+                                                            Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
+                                                            db.categoryDAO().addCategory(newCat);
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        });
-                                timeStamp.setTimeCategory(strTime);
-                                timeStamp.setId(timeStamp.getId());
-                                db.timeStampDAO().edit(timeStamp);
+                                            });
+                                    timeStamp.setTimeCategory(strTime);
+                                    timeStamp.setId(timeStamp.getId());
+                                    db.timeStampDAO().edit(timeStamp);
+                                }
                             }
                         }
                     }
                 });
-
     }
 
 }
