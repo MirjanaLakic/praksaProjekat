@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        db = AppDatabase.getInstance(this);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,11 +87,12 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getUser();
-
-
         pieChart = (PieChart) findViewById(R.id.pie_main);
-        setPieChart();
+        barChart = (BarChart) findViewById(R.id.bar_expenses_main);
+        barChartIncome = (BarChart) findViewById(R.id.bar_incomes_main);
+
+        getUser();
+        getList();
 
         pieChart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,10 +101,24 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        barChart = (BarChart) findViewById(R.id.bar_expenses_main);
-        setBarEx();
-        barChartIncome = (BarChart) findViewById(R.id.bar_incomes_main);
-        setBarIn();
+
+        barChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ExpensesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        barChartIncome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ExpensesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     public void getUser(){
@@ -129,28 +146,6 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         getUser();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -189,6 +184,7 @@ public class MainActivity extends AppCompatActivity
     public void setPieChart(){
         pieChart.setRotationEnabled(true);
         pieChart.setHoleRadius(70f);
+        //pieChart.setHoleColor(R.color.colorPrimary);
         pieChart.setTransparentCircleAlpha(0);
         pieChart.setCenterTextSize(15);
         pieChart.getDescription().setEnabled(false);
@@ -348,7 +344,7 @@ public class MainActivity extends AppCompatActivity
         barChart.getAxisLeft().setDrawGridLines(false);
         barChart.getLegend().setPosition(Legend.LegendPosition.LEFT_OF_CHART_CENTER);
         barChart.setDrawValueAboveBar(false);
-        barChart.setTouchEnabled(false);
+        barChart.setTouchEnabled(true);
         addDataToBarEx();
     }
 
@@ -430,6 +426,22 @@ public class MainActivity extends AppCompatActivity
         }catch (NullPointerException e){
         }
 
+    }
+
+    private void getList() {
+        LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAllExpenses();
+        tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
+            @Override
+            public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
+                yEntry.clear();
+                xEntry.clear();
+                yBarEx.clear();
+                yBarIn.clear();
+                setPieChart();
+                setBarEx();
+                setBarIn();
+            }
+        });
     }
 
 }

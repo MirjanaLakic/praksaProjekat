@@ -12,7 +12,8 @@
         android:layout_height="30dp"
         android:background="#fff"
         app:srcCompat="@drawable/ic_do_not_disturb_on_black_24dp"
-        android:id="@+id/delete_category"/>
+        android:id="@+id/delete_category"
+        style="@style/background"/>
 
     <ImageView
         android:layout_width="30dp"

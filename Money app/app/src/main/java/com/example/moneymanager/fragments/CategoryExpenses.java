@@ -21,9 +21,11 @@ import com.example.moneymanager.RecyclerViewAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -80,6 +82,10 @@ public class CategoryExpenses extends Fragment {
     }
 
     private void retrieveExpenses() {
+/*        FirebaseUser currentUser = auth.getCurrentUser();
+        CollectionReference collectionReference = firedb.collection("Categories").document(currentUser.getEmail())
+                .collection("UserCategoriesExpenses");
+        List<QueryDocumentSnapshot> documents = collectionReference.get();*/
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
         // COMPLETED (5) Observe tasks and move the logic from runOnUiThread to onChanged
         tasks.observe(this, new Observer<List<Category>>() {

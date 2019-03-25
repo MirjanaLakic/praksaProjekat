@@ -41,24 +41,30 @@ public class AddNewExpense extends AppCompatActivity implements Icon {
         actionBar = this.getSupportActionBar();
         getList();
         img = (ImageView) findViewById(R.id.icon_img_selected2);
-        if (getIntent().getStringExtra("edit").equals("edit")) {
-            actionBar.setTitle("Edit");
-            int id = getIntent().getIntExtra("id", -1);
-            ExpensesAndIncomes item = db.expensesAndIncomeDAO().findById(id);
-            Category category = db.categoryDAO().findById(item.getCategory());
-            img.setImageResource(category.getPhoto());
-            categoryID = category.getId();
+        if (icons.size() == 0){
+            Toast.makeText(this, "Please Enter Categories First", Toast.LENGTH_SHORT).show();
+            finish();
         }else {
-            img.setImageResource(icons.get(0).getPhoto());
-            categoryID = icons.get(0).getId();
-        }
+            if (getIntent().getStringExtra("edit").equals("edit")) {
+                actionBar.setTitle("Edit");
+                int id = getIntent().getIntExtra("id", -1);
+                ExpensesAndIncomes item = db.expensesAndIncomeDAO().findById(id);
+                Category category = db.categoryDAO().findById(item.getCategory());
+                img.setImageResource(category.getPhoto());
+                categoryID = category.getId();
+            } else {
+                img.setImageResource(icons.get(0).getPhoto());
+                categoryID = icons.get(0).getId();
+            }
 
-        recyclerView = (RecyclerView) findViewById(R.id.rec_view);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 7);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerViewAdapter = new RecyclerViewIconAndName(getApplicationContext(), icons, this);
-        recyclerView.setAdapter(recyclerViewAdapter);
-        initViews();
+
+            recyclerView = (RecyclerView) findViewById(R.id.rec_view);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 7);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            recyclerViewAdapter = new RecyclerViewIconAndName(getApplicationContext(), icons, this);
+            recyclerView.setAdapter(recyclerViewAdapter);
+            initViews();
+        }
     }
 
     private void getList() {
@@ -67,7 +73,6 @@ public class AddNewExpense extends AppCompatActivity implements Icon {
         }else if (getIntent().getStringExtra("item").equals("INCOME")){
             actionBar.setTitle("Add Income");
             icons = db.categoryDAO().loadIconsIncome();
-        }else {
         }
     }
 

@@ -35,15 +35,12 @@ public class Proba extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
-        List<Category> categories = appdb.categoryDAO().loadIncomes();
-        List<Category> categorie = appdb.categoryDAO().loadExpenses();
-        Map<String, List<Category>> map = new HashMap<>();
-        map.put("categoryIncome", categories);
-        map.put("categoryExpenses", categorie);
+        Category category = appdb.categoryDAO().findById(3);
+        Map<String, Category> map = new HashMap<>();
+        map.put("categoryExpenses", category);
 
 
-
-        db.collection("MoneyApp").document(currentUser.getEmail())
+        db.collection("Categories").document(currentUser.getEmail()).collection("UserCategoriesExpenses").document(category.getName())
                 .set(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -54,18 +51,10 @@ public class Proba extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                        System.out.println(e);
                         Toast.makeText(Proba.this, "NIJE", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        DocumentReference reference = db.collection("MoneyApp").document(currentUser.getEmail());
-        reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                List<Category> c = (List<Category>) documentSnapshot.get("categoryExpenses");
-                System.out.println();
-            }
-        });
-
     }
 }

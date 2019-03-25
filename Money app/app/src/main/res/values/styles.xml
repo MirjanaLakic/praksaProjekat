@@ -46,4 +46,8 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="background" parent="AppTheme">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
 </resources>
