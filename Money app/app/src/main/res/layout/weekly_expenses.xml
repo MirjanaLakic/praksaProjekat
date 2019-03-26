@@ -53,12 +53,12 @@
         android:layout_alignRight="@+id/pie_weekly"
         android:layout_alignBottom="@+id/pie_weekly"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="199dp"
-        android:layout_marginLeft="199dp"
+        android:layout_marginStart="158dp"
+        android:layout_marginLeft="158dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="1dp"
         android:layout_marginRight="1dp"
-        android:layout_marginBottom="192dp"
+        android:layout_marginBottom="193dp"
         android:text="BALANCE" />
 
 </RelativeLayout>

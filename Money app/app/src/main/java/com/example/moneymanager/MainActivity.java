@@ -2,15 +2,11 @@ package com.example.moneymanager;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.persistence.room.Dao;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,12 +35,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -102,6 +93,9 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        yEntry.clear();
+        xEntry.clear();
 
         pieChart = (PieChart) findViewById(R.id.pie_main);
         barChart = (BarChart) findViewById(R.id.bar_expenses_main);
@@ -555,67 +549,69 @@ public class MainActivity extends AppCompatActivity
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             String strTime = (String) documentSnapshot.get("time");
                             TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
-                            if (timeStamp.getTimeCategoryIncome() == null) {
-                                firedb.collection("Categories").document(currentUser.getEmail())
-                                        .collection("UserCategoryIncomes").get()
-                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                                    Category category = document.toObject(Category.class);
-                                                    Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
-                                                    db.categoryDAO().addCategory(newCat);
-                                                }
-                                            }
-                                        });
-                                timeStamp.setTimeCategoryIncome(strTime);
-                                timeStamp.setId(timeStamp.getId());
-                                db.timeStampDAO().edit(timeStamp);
-                            } else {
-                                if (timeStamp.getTimeCategoryIncome() != null && strTime != null) {
-                                    if (!strTime.equals(timeStamp.getTimeCategoryIncome())) {
-                                        List<Integer> idList = new ArrayList<>();
-                                        List<Integer> idCloud = new ArrayList<>();
-                                        firedb.collection("Categories").document(currentUser.getEmail())
-                                                .collection("UserCategoryIncomes").get()
-                                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                        List<Integer> idList = new ArrayList<>();
-                                                        List<Integer> idCloud = new ArrayList<>();
-                                                        List<Category> list = db.categoryDAO().loadIncomes();
-                                                        for (int i = 0; i < list.size(); i++) {
-                                                            idList.add(list.get(i).getId());
-                                                        }
-                                                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                                            Category category = document.toObject(Category.class);
-                                                            idCloud.add(category.getId());
-                                                            if (!idList.contains(category.getId())) {
-                                                                Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
-                                                                db.categoryDAO().addCategory(newCat);
-                                                            }
-                                                        }
-                                                        if (idCloud.contains(0)) {
-                                                            for (int i = 0; i < idCloud.size(); i++) {
-                                                                if (idCloud.get(i) == 0) {
-                                                                    idCloud.remove(idCloud.get(i));
-                                                                }
-                                                            }
-                                                        }
-                                                        if (idList.size() > idCloud.size()) {
-                                                            for (int i = 0; i < idList.size(); i++) {
-                                                                if (!idCloud.contains(idList.get(i))) {
-                                                                    Category category = db.categoryDAO().findById(idList.get(i));
-                                                                    db.categoryDAO().deleteCateogry(category);
-                                                                }
-                                                            }
-                                                        }
+                            if (timeStamp != null) {
+                                if (timeStamp.getTimeCategoryIncome() == null) {
+                                    firedb.collection("Categories").document(currentUser.getEmail())
+                                            .collection("UserCategoryIncomes").get()
+                                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                                        Category category = document.toObject(Category.class);
+                                                        Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
+                                                        db.categoryDAO().addCategory(newCat);
                                                     }
-                                                });
+                                                }
+                                            });
+                                    timeStamp.setTimeCategoryIncome(strTime);
+                                    timeStamp.setId(timeStamp.getId());
+                                    db.timeStampDAO().edit(timeStamp);
+                                } else {
+                                    if (timeStamp.getTimeCategoryIncome() != null && strTime != null) {
+                                        if (!strTime.equals(timeStamp.getTimeCategoryIncome())) {
+                                            List<Integer> idList = new ArrayList<>();
+                                            List<Integer> idCloud = new ArrayList<>();
+                                            firedb.collection("Categories").document(currentUser.getEmail())
+                                                    .collection("UserCategoryIncomes").get()
+                                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                            List<Integer> idList = new ArrayList<>();
+                                                            List<Integer> idCloud = new ArrayList<>();
+                                                            List<Category> list = db.categoryDAO().loadIncomes();
+                                                            for (int i = 0; i < list.size(); i++) {
+                                                                idList.add(list.get(i).getId());
+                                                            }
+                                                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                                                Category category = document.toObject(Category.class);
+                                                                idCloud.add(category.getId());
+                                                                if (!idList.contains(category.getId())) {
+                                                                    Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
+                                                                    db.categoryDAO().addCategory(newCat);
+                                                                }
+                                                            }
+                                                            if (idCloud.contains(0)) {
+                                                                for (int i = 0; i < idCloud.size(); i++) {
+                                                                    if (idCloud.get(i) == 0) {
+                                                                        idCloud.remove(idCloud.get(i));
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (idList.size() > idCloud.size()) {
+                                                                for (int i = 0; i < idList.size(); i++) {
+                                                                    if (!idCloud.contains(idList.get(i))) {
+                                                                        Category category = db.categoryDAO().findById(idList.get(i));
+                                                                        db.categoryDAO().deleteCateogry(category);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    });
 
-                                        timeStamp.setTimeCategory(strTime);
-                                        timeStamp.setId(timeStamp.getId());
-                                        db.timeStampDAO().edit(timeStamp);
+                                            timeStamp.setTimeCategory(strTime);
+                                            timeStamp.setId(timeStamp.getId());
+                                            db.timeStampDAO().edit(timeStamp);
+                                        }
                                     }
                                 }
                             }
@@ -652,8 +648,8 @@ public class MainActivity extends AppCompatActivity
                                     db.timeStampDAO().edit(timeStamp);
                                 } else {
                                     if (timeStamp != null) {
-                                        if (timeStamp.getTimeCategoryIncome() != null && strTime != null) {
-                                            if (!strTime.equals(timeStamp.getTimeCategoryIncome())) {
+                                        if (timeStamp.getTimeExpenses() != null && strTime != null) {
+                                            if (!strTime.equals(timeStamp.getTimeExpenses())) {
                                                 List<Integer> idList = new ArrayList<>();
                                                 List<Integer> idCloud = new ArrayList<>();
                                                 firedb.collection("Expenses").document(currentUser.getEmail())
@@ -733,8 +729,8 @@ public class MainActivity extends AppCompatActivity
                                     timeStamp.setId(timeStamp.getId());
                                     db.timeStampDAO().edit(timeStamp);
                                 } else {
-                                    if (timeStamp.getTimeCategoryIncome() != null && strTime != null) {
-                                        if (!strTime.equals(timeStamp.getTimeCategoryIncome())) {
+                                    if (timeStamp.getTimeIncomes() != null && strTime != null) {
+                                        if (!strTime.equals(timeStamp.getTimeIncomes())) {
                                             List<Integer> idList = new ArrayList<>();
                                             List<Integer> idCloud = new ArrayList<>();
                                             firedb.collection("Expenses").document(currentUser.getEmail())
