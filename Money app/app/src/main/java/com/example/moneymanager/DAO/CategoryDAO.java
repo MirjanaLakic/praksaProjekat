@@ -33,6 +33,9 @@ public interface CategoryDAO {
     @Query("SELECT * FROM Categories WHERE id =:id")
     Category findById(int id);
 
+    @Query("SELECT * FROM Categories WHERE name =:name AND photo =:photo AND type =:type")
+    Category find(String name, int photo, String type);
+
     @Insert
     void addCategory(Category category);
 

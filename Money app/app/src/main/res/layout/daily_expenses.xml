@@ -49,19 +49,19 @@
 
     <TextView
         android:id="@+id/balance"
-        android:layout_width="158dp"
-        android:layout_height="34dp"
+        android:layout_width="126dp"
+        android:layout_height="31dp"
         android:layout_alignStart="@+id/pie_daily"
         android:layout_alignLeft="@+id/pie_daily"
         android:layout_alignEnd="@+id/pie_daily"
         android:layout_alignRight="@+id/pie_daily"
         android:layout_alignBottom="@+id/pie_daily"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="199dp"
-        android:layout_marginLeft="199dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginRight="1dp"
-        android:layout_marginBottom="192dp"
+        android:layout_marginStart="250dp"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="-19dp"
+        android:layout_marginRight="-19dp"
+        android:layout_marginBottom="196dp"
         android:text="BALANCE" />
 </RelativeLayout>
