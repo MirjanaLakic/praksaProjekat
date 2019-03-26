@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity
 
         firedb = FirebaseFirestore.getInstance();
         getUser();
-        syncBase();
         getList();
 
         pieChart.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +139,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }else {
             setUser(currentUser);
+            syncBase();
         }
     }
 
@@ -149,7 +149,8 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            finish();
+            moveTaskToBack(true);
         }
     }
 
@@ -777,6 +778,12 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 }
                             }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            System.out.println(e);
                         }
                     });
         }
