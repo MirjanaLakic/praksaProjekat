@@ -36,8 +36,18 @@ public class ExpensesActivity extends AppCompatActivity{
         viewPagerAdapter.addFragment(new ExpensesWeekly(), "Weekly");
         viewPagerAdapter.addFragment(new ExpensesMonthly(), "Monthly");
         viewPagerAdapter.addFragment(new ExpensesYearly(), "Yearly");
+
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        try {
+            if (getIntent().getIntExtra("income", 0) == 2) {
+                TabLayout.Tab tab = tabLayout.getTabAt(2);
+                tab.select();
+            }
+        }catch (NullPointerException e){
+
+        }
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setElevation(0);

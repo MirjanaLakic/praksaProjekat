@@ -49,15 +49,19 @@ public class RecyclerViewAdapterExpense extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(MyViewHolder myViewHolder, int i) {
 
-        myViewHolder.memo.setText(data.get(i).getNote());
-        int id = data.get(i).getCategory();
-        Category category = db.categoryDAO().findById(id);
-        myViewHolder.category.setText(category.getName());
-        String f = Float.toString(data.get(i).getPrice());
-        myViewHolder.price.setText(f);
-        String date = dateFormat.format(data.get(i).getDate());
-        myViewHolder.date.setText(date);
-        myViewHolder.img.setImageResource(category.getPhoto());
+        List<Category> categories = db.categoryDAO().loadExpenses();
+
+        if (categories.size() != 0) {
+            myViewHolder.memo.setText(data.get(i).getNote());
+            int id = data.get(i).getCategory();
+            Category category = db.categoryDAO().findById(id);
+            myViewHolder.category.setText(category.getName());
+            String f = Float.toString(data.get(i).getPrice());
+            myViewHolder.price.setText(f);
+            String date = dateFormat.format(data.get(i).getDate());
+            myViewHolder.date.setText(date);
+            myViewHolder.img.setImageResource(category.getPhoto());
+        }
 
     }
 

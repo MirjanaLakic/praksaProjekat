@@ -30,6 +30,10 @@ public interface CategoryDAO {
     @Query("SELECT * FROM Categories WHERE type = 'INCOME' ORDER BY id DESC")
     List<Category> loadIconsIncome();
 
+    @Query("SELECT * FROM Categories")
+    List<Category> getAll();
+
+
     @Query("SELECT * FROM Categories WHERE id =:id")
     Category findById(int id);
 

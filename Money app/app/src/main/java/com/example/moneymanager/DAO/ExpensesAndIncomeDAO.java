@@ -29,6 +29,9 @@ public interface ExpensesAndIncomeDAO {
     @Query("SELECT * FROM ExpensesAndIncomes WHERE type = 'INCOME'")
     List<ExpensesAndIncomes> getIncome();
 
+    @Query("SELECT * FROM ExpensesAndIncomes")
+    List<ExpensesAndIncomes> getall();
+
     @Query("SELECT * FROM ExpensesAndIncomes WHERE category =:idCategory")
     List<ExpensesAndIncomes> getExpensesForOneCategory(int idCategory);
 

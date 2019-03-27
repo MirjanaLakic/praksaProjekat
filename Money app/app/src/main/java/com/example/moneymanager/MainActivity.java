@@ -1,14 +1,11 @@
 package com.example.moneymanager;
 
-import android.app.ProgressDialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,7 +20,7 @@ import android.widget.TextView;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
-import com.example.moneymanager.DAO.TimeStamp;
+import com.example.moneymanager.DAO.LastUser;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -37,14 +34,9 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -127,6 +119,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ExpensesActivity.class);
+                intent.putExtra("income", 2);
                 startActivity(intent);
             }
         });
@@ -151,7 +144,6 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             finish();
-            moveTaskToBack(true);
         }
     }
 
@@ -179,11 +171,16 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, AddReminder.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.nav_manage) {
-            Intent intent = new Intent(this, Proba.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_share) {
         } else if (id == R.id.nav_send) {
+            LastUser lastUser = db.lastUserDAO().getLastUser();
+            if (lastUser == null){
+                LastUser lastUser1 = new LastUser();
+                lastUser1.setEmail(currentUser.getEmail());
+                db.lastUserDAO().newLastUser(lastUser1);
+            }else {
+                lastUser.setEmail(currentUser.getEmail());
+                db.lastUserDAO().edit(lastUser);
+            }
             auth.signOut();
             Intent intent = new Intent(this, EmailPasswordActivity.class);
             startActivity(intent);
@@ -363,12 +360,6 @@ public class MainActivity extends AppCompatActivity
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(@Nullable List<Category> lista) {
-
-                for (int i = 0; i < lista.size(); i++) {
-                    System.out.println(lista.get(i).getId());
-                    System.out.println(lista.get(i).getName());
-                }
-
                 final ArrayList<Integer> listMonths = getMonthList();
                 int increment = 0;
                 for (int j = 0; j < listMonths.size(); j++) {
@@ -418,12 +409,8 @@ public class MainActivity extends AppCompatActivity
         barChartIncome.getAxisLeft().setDrawGridLines(false);
         barChartIncome.getLegend().setPosition(Legend.LegendPosition.LEFT_OF_CHART_CENTER);
         barChartIncome.setDrawValueAboveBar(false);
-        barChartIncome.setTouchEnabled(false);
+        barChartIncome.setTouchEnabled(true);
         addDataToBarIn();
-    }
-
-    public void testNotification(View view){
-        NotificationUtils.remindUSer(this);
     }
 
     private void setUser(FirebaseUser currentUser){

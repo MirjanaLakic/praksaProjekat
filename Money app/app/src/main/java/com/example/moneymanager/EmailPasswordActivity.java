@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
+import com.example.moneymanager.DAO.LastUser;
 import com.example.moneymanager.DAO.TimeStamp;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -57,6 +58,8 @@ public class EmailPasswordActivity extends BaseActivity implements
     private FirebaseFirestore firedb;
     private AppDatabase db;
 
+    private LastUser lastUser;
+
     // [END declare_auth]
 
     @Override
@@ -66,6 +69,7 @@ public class EmailPasswordActivity extends BaseActivity implements
 
         db = AppDatabase.getInstance(this);
         firedb = FirebaseFirestore.getInstance();
+        lastUser = new LastUser();
 
         // Views
         mStatusTextView = findViewById(R.id.status);
@@ -139,6 +143,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             currentUser = mAuth.getCurrentUser();
+                            lastUser = db.lastUserDAO().getLastUser();
                             syncBase();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
@@ -173,6 +178,8 @@ public class EmailPasswordActivity extends BaseActivity implements
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
+                            lastUser = db.lastUserDAO().getLastUser();
+                            currentUser = mAuth.getCurrentUser();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                         } else {
@@ -206,6 +213,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             currentUser = mAuth.getCurrentUser();
+                            lastUser = db.lastUserDAO().getLastUser();
                             syncBase();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
@@ -308,6 +316,8 @@ public class EmailPasswordActivity extends BaseActivity implements
     }
 
     public void syncBase(){
+        if (lastUser == null){
+        }
         if (currentUser != null) {
             firedb.collection("Categories").document(currentUser.getEmail())
                     .collection("UserCategoriesExpenses").document("time").get()

@@ -75,4 +75,8 @@ public class AddReminder extends AppCompatActivity implements TimePickerDialog.O
         calendar.set(Calendar.MINUTE, minute);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
+
+    public void testNotification(View view){
+        NotificationUtils.remindUSer(this);
+    }
 }

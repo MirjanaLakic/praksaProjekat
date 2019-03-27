@@ -77,10 +77,6 @@
             android:name=".EmailPasswordActivity"
             android:label="@string/sign_in">
         </activity>
-        <activity
-            android:name=".Proba"
-            android:label="Proba">
-        </activity>
         <receiver
             android:name=".AlarmReciver" />
     </application>

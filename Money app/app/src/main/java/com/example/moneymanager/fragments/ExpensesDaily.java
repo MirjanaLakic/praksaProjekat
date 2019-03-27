@@ -209,10 +209,8 @@ public class ExpensesDaily extends Fragment {
 
                     }
 
-                    System.out.println(sum);
                     List<Category> item = db.categoryDAO().loadIncomes();
 
-                    System.out.println();
 
                     float budget = 0;
                     for (int i = 0; i < item.size(); i++) {
@@ -225,15 +223,9 @@ public class ExpensesDaily extends Fragment {
                                 budget += categoryIncome.get(j).getPrice();
                             }
                         }
-
-                        for (int j = 0; j < categoryIncome.size(); j++) {
-                            System.out.println(categoryIncome.get(j).getNote());
-                        }
-
                     }
-                    System.out.println(budget);
+
                     float finalBalance = budget - sum;
-                    System.out.println(finalBalance);
                     balance = (TextView) view.findViewById(R.id.balance);
                     if (finalBalance >= 0) {
                         balance.setTextColor(Color.GREEN);
