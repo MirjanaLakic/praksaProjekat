@@ -69,12 +69,7 @@ public class ExpensesWeekly extends Fragment {
         return view;
     }
     private void getList() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -7);
-        Date date2 = calendar.getTime();
-        String seventhDay = dateFormat.format(date2);
-        String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[0]);
+        final List<String> check = getWeekList();
         LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAllExpenses();
         tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
             @Override
@@ -82,9 +77,7 @@ public class ExpensesWeekly extends Fragment {
                 List<ExpensesAndIncomes> l = new ArrayList<>();
                 for (int i = 0; i < lista.size(); i++) {
                     String dateFromLista = dateFormat.format(lista.get(i).getDate());
-                    String[] parse = dateFromLista.split("/");
-                    int parseInt = Integer.valueOf(parse[0]);
-                    if (sevenDays <= parseInt){
+                    if (check.contains(dateFromLista)){
                         l.add(lista.get(i));
                     }
                 }
@@ -105,13 +98,8 @@ public class ExpensesWeekly extends Fragment {
     }
 
     private void addDataToChart(){
+        final List<String> check = getWeekList();
         finalSum = 0;
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -7);
-        Date date2 = calendar.getTime();
-        String seventhDay = dateFormat.format(date2);
-        String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[0]);
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
@@ -121,14 +109,13 @@ public class ExpensesWeekly extends Fragment {
                     List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
                     for (int j = 0; j < categoryExpesess.size(); j++) {
                         String dateFromLista = dateFormat.format(categoryExpesess.get(j).getDate());
-                        String[] parse = dateFromLista.split("/");
-                        int parseInt = Integer.valueOf(parse[0]);
-                        if (sevenDays <= parseInt){
+                        if (check.contains(dateFromLista)){
                             sum += categoryExpesess.get(j).getPrice();
                             xEntry.add(lista.get(i).getName());
                         }
 
                     }
+
                     if (sum != 0) {
                         yEntry.add(new PieEntry(sum, i));
                         finalSum += sum;
@@ -245,5 +232,21 @@ public class ExpensesWeekly extends Fragment {
                 balance.setText("Balance: "+s);
             }
         });
+    }
+
+    public ArrayList<String> getWeekList(){
+        ArrayList<String> listofMonths = new ArrayList<>();
+        Date current = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(current);
+        cal.set(Calendar.DATE, (cal.get(Calendar.DATE)-7));
+        String s;
+        for (int i = 6; i >= 0; i--) {
+            cal.set(Calendar.DATE, (cal.get(Calendar.DATE)+1));
+            current = cal.getTime();
+            s = dateFormat.format(current);
+            listofMonths.add(s);
+        }
+        return listofMonths;
     }
 }

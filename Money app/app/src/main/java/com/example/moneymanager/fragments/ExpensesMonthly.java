@@ -18,16 +18,22 @@ import com.example.moneymanager.DAO.ExpensesAndIncomes;
 import com.example.moneymanager.R;
 import com.example.moneymanager.RecyclerViewAdapterExpense;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ExpensesMonthly extends Fragment {
 
@@ -90,70 +96,44 @@ public class ExpensesMonthly extends Fragment {
     }
 
     private void addDataToChart(){
-        final Date date2 = new Date();
-        String seventhDay = dateFormat.format(date2);
-        String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[1]);
-        final LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
+        final LiveData<List<ExpensesAndIncomes>> tasks = db.expensesAndIncomeDAO().getAll();
+        final List<Integer> months = Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12);
         if (tasks != null) {
-            tasks.observe(this, new Observer<List<Category>>() {
+            tasks.observe(this, new Observer<List<ExpensesAndIncomes>>() {
                 @Override
-                public void onChanged(@Nullable List<Category> lista) {
-                    int month = 0;
+                public void onChanged(@Nullable List<ExpensesAndIncomes> lista) {
                     float sum = 0;
                     if (lista.size() != 0) {
                         xEntry.clear();
                         yEntry.clear();
-                        for (int i = 0; i < lista.size(); i++) {
-                            List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
-                            if (categoryExpesess.size() != 0) {
-                                for (int j = 0; j < categoryExpesess.size(); j++) {
-                                    String dateFromLista = dateFormat.format(categoryExpesess.get(j).getDate());
-                                    String[] parse = dateFromLista.split("/");
-                                    int parseInt = Integer.valueOf(parse[1]);
-                                    month = parseInt;
-                                    if (sevenDays == parseInt) {
-                                        sum += categoryExpesess.get(j).getPrice();
-                                    }
+                        List<ExpensesAndIncomes> expenses = db.expensesAndIncomeDAO().getExpenses();
+                        List<ExpensesAndIncomes> incomes = db.expensesAndIncomeDAO().getIncome();
+                        for (int i = 0; i < months.size(); i++) {
+
+                            for (int j = 0; j <expenses.size(); j++) {
+                                String dateFromLista = dateFormat.format(expenses.get(j).getDate());
+                                String[] parse = dateFromLista.split("/");
+                                int monthInt = Integer.valueOf(parse[1]);
+                                if (months.get(i).equals(monthInt)){
+                                    sum += expenses.get(j).getPrice();
                                 }
                             }
-                        }
-                        if (sum != 0) {
-                            yEntry.add(new Entry(month, sum));
-                        }
+                            yEntry.add(new Entry(months.get(i), sum));
+                            sum = 0;
 
-                        List<Category> item = db.categoryDAO().loadIncomes();
-
-                        float sum1 = 0;
-                        int month1 = 0;
-                        if (item.size() != 0) {
-                            for (int i = 0; i < item.size(); i++) {
-                                List<ExpensesAndIncomes> categoryIncome = db.expensesAndIncomeDAO().getExpensesForOneCategory(item.get(i).getId());
-                                for (int j = 0; j < categoryIncome.size(); j++) {
-                                    String dateFromLista = dateFormat.format(categoryIncome.get(j).getDate());
-                                    String[] parse = dateFromLista.split("/");
-                                    int parseInt1 = Integer.valueOf(parse[1]);
-                                    month1 = parseInt1;
-                                    if (sevenDays == parseInt1) {
-                                        sum1 += categoryIncome.get(j).getPrice();
-                                    }
+                            for (int k = 0; k <incomes.size(); k++) {
+                                String dateFromLista = dateFormat.format(incomes.get(k).getDate());
+                                String[] parse = dateFromLista.split("/");
+                                int monthInt = Integer.valueOf(parse[1]);
+                                if (months.get(i).equals(monthInt)){
+                                    sum += incomes.get(k).getPrice();
                                 }
+                            }
+                            xEntry.add(new Entry(months.get(i), sum));
+                            sum = 0;
 
-                            }
-                            if (sum1 != 0) {
-                                xEntry.add(new Entry(month1, sum1));
-                                if (month == 0 && sum == 0){
-                                    yEntry.add(new Entry(month1, sum));
-                                }
-                                setChart(xEntry, yEntry);
-                            }
-                        } else {
-                            xEntry.add(new Entry(month, 0));
-                            if (month == 0 && sum == 0){
-                                yEntry.add(new Entry(month1, sum));
-                            }
-                            setChart(xEntry, yEntry);
                         }
+                        setChart(xEntry, yEntry);
                     }
                 }
             });
@@ -169,6 +149,8 @@ public class ExpensesMonthly extends Fragment {
         lineDataSet1.setColor(Color.GREEN);
         lineDataSet.setCircleColor(Color.RED);
         lineDataSet1.setCircleColor(Color.GREEN);
+        lineDataSet.setCircleColorHole(Color.RED);
+        lineDataSet1.setCircleColorHole(Color.GREEN);
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(lineDataSet);
         dataSets.add(lineDataSet1);
