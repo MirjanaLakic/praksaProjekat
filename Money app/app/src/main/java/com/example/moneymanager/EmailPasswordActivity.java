@@ -1,6 +1,7 @@
 package com.example.moneymanager;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -314,7 +315,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             String strTime = (String) documentSnapshot.get("time");
-                            TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
+                            final TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
                             if (timeStamp == null) {
                                 firedb.collection("Categories").document(currentUser.getEmail())
                                         .collection("UserCategoriesExpenses").get()
@@ -322,25 +323,25 @@ public class EmailPasswordActivity extends BaseActivity implements
                                             @Override
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                                    Category category = document.toObject(Category.class);
+                                                    final Category category = document.toObject(Category.class);
                                                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                         @Override
                                                         public void run() {
-
+                                                            db.categoryDAO().addCategory(category);
                                                         }
                                                     });
-                                                    db.categoryDAO().addCategory(category);
+
                                                 }
                                             }
                                         });
-                                TimeStamp obj = new TimeStamp(strTime);
+                                final TimeStamp obj = new TimeStamp(strTime);
                                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                     @Override
                                     public void run() {
-
+                                        db.timeStampDAO().addTimeStamp(obj);
                                     }
                                 });
-                                db.timeStampDAO().addTimeStamp(obj);
+
                             } else {
                                 if (timeStamp.getTimeCategory() != null && strTime != null) {
                                     if (!strTime.equals(timeStamp.getTimeCategory())) {
@@ -361,14 +362,14 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                             Category category = document.toObject(Category.class);
                                                             idCloud.add(category.getId());
                                                             if (!idList.contains(category.getId())) {
-                                                                Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
+                                                                final Category newCat = new Category(category.getId(), category.getName(), category.getPhoto(), category.getType());
                                                                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                     @Override
                                                                     public void run() {
-
+                                                                        db.categoryDAO().addCategory(newCat);
                                                                     }
                                                                 });
-                                                                db.categoryDAO().addCategory(newCat);
+
                                                             }
                                                         }
                                                         if (idCloud.contains(0)){
@@ -381,14 +382,14 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                         if (idList.size() > idCloud.size()){
                                                             for (int i = 0; i < idList.size(); i++) {
                                                                 if (!idCloud.contains(idList.get(i))){
-                                                                    Category category = db.categoryDAO().findById(idList.get(i));
+                                                                    final Category category = db.categoryDAO().findById(idList.get(i));
                                                                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                         @Override
                                                                         public void run() {
-
+                                                                            db.categoryDAO().deleteCateogry(category);
                                                                         }
                                                                     });
-                                                                    db.categoryDAO().deleteCateogry(category);
+
                                                                 }
                                                             }
                                                         }
@@ -400,10 +401,10 @@ public class EmailPasswordActivity extends BaseActivity implements
                                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                             @Override
                                             public void run() {
-
+                                                db.timeStampDAO().edit(timeStamp);
                                             }
                                         });
-                                        db.timeStampDAO().edit(timeStamp);
+
                                     }
                                 }
                             }
@@ -439,7 +440,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                         Category category = document.toObject(Category.class);
-                                                        final Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
+                                                        final Category newCat = new Category(category.getId(), category.getName(), category.getPhoto(), category.getType());
                                                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
@@ -479,7 +480,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                 Category category = document.toObject(Category.class);
                                                                 idCloud.add(category.getId());
                                                                 if (!idList.contains(category.getId())) {
-                                                                    final Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
+                                                                    final Category newCat = new Category(category.getId(), category.getName(), category.getPhoto(), category.getType());
                                                                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                         @Override
                                                                         public void run() {
@@ -549,11 +550,16 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                         ExpensesAndIncomes item = document.toObject(ExpensesAndIncomes.class);
-                                                        final ExpensesAndIncomes expenses = new ExpensesAndIncomes(item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
+                                                        final ExpensesAndIncomes expenses = new ExpensesAndIncomes(item.getId(), item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
                                                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                db.expensesAndIncomeDAO().addNew(expenses);
+                                                                try {
+                                                                    db.expensesAndIncomeDAO().addNew(expenses);
+                                                                }catch (SQLiteException e){
+                                                                    db.expensesAndIncomeDAO().edit(expenses);
+                                                                }
+
                                                             }
                                                         });
 
@@ -590,7 +596,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                     ExpensesAndIncomes item = document.toObject(ExpensesAndIncomes.class);
                                                                     idCloud.add(item.getId());
                                                                     if (!idList.contains(item.getId())) {
-                                                                        final ExpensesAndIncomes newItem = new ExpensesAndIncomes(item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
+                                                                        final ExpensesAndIncomes newItem = new ExpensesAndIncomes(item.getId(), item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
                                                                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                             @Override
                                                                             public void run() {
@@ -661,7 +667,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                         ExpensesAndIncomes item = document.toObject(ExpensesAndIncomes.class);
-                                                        final ExpensesAndIncomes expenses = new ExpensesAndIncomes(item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
+                                                        final ExpensesAndIncomes expenses = new ExpensesAndIncomes(item.getId(), item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
                                                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
@@ -672,13 +678,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                     }
                                                 }
                                             });
-                                    List<ExpensesAndIncomes> list = db.expensesAndIncomeDAO().getIncome();
-                                    for (int i = 0; i < list.size(); i++) {
-                                        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-                                        System.out.println(list.get(i).getNote());
-                                        System.out.println(list.get(i).getDate());
-                                    }
-
                                     timeStamp.setTimeIncomes(strTime);
                                     timeStamp.setId(timeStamp.getId());
                                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -708,7 +707,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                 ExpensesAndIncomes item = document.toObject(ExpensesAndIncomes.class);
                                                                 idCloud.add(item.getId());
                                                                 if (!idList.contains(item.getId())) {
-                                                                    final ExpensesAndIncomes newItem = new ExpensesAndIncomes(item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
+                                                                    final ExpensesAndIncomes newItem = new ExpensesAndIncomes(item.getId(), item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
                                                                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                         @Override
                                                                         public void run() {

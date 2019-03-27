@@ -141,7 +141,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }else {
             setUser(currentUser);
-            //syncBase();
         }
     }
 
@@ -266,10 +265,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addDataToBarEx(){
-        Date date2 = new Date();
-        String seventhDay = dateFormat.format(date2);
-        final String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[1]);
         db = AppDatabase.getInstance(MainActivity.this);
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
         tasks.observe(this, new Observer<List<Category>>() {
@@ -363,28 +358,29 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addDataToBarIn(){
-        Date date2 = new Date();
-        String seventhDay = dateFormat.format(date2);
-        final String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[1]);
         db = AppDatabase.getInstance(MainActivity.this);
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllIncomes();
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(@Nullable List<Category> lista) {
-                ArrayList<Integer> xMonth = new ArrayList<>();
+
+                for (int i = 0; i < lista.size(); i++) {
+                    System.out.println(lista.get(i).getId());
+                    System.out.println(lista.get(i).getName());
+                }
+
                 final ArrayList<Integer> listMonths = getMonthList();
                 int increment = 0;
                 for (int j = 0; j < listMonths.size(); j++) {
                     float sum = 0;
                     for (int i = 0; i < lista.size(); i++) {
-                        List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
-                        for (int k = 0; k < categoryExpesess.size(); k++) {
-                            String dateFromLista = dateFormat.format(categoryExpesess.get(k).getDate());
+                        List<ExpensesAndIncomes> list = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
+                        for (int k = 0; k < list.size(); k++) {
+                            String dateFromLista = dateFormat.format(list.get(k).getDate());
                             String[] parse = dateFromLista.split("/");
                             int parseInt = Integer.valueOf(parse[1]);
                             if (listMonths.get(j) == parseInt) {
-                                sum += categoryExpesess.get(k).getPrice();
+                                sum += list.get(k).getPrice();
                             }
 
                         }
