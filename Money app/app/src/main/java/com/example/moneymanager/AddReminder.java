@@ -17,6 +17,7 @@ import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Reminder;
 import com.example.moneymanager.fragments.TimePicker;
 
+import android.text.format.DateFormat;
 import java.util.Calendar;
 
 public class AddReminder extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
@@ -50,35 +51,42 @@ public class AddReminder extends AppCompatActivity implements TimePickerDialog.O
                 timePicker.show(getSupportFragmentManager(), "time picker");
             }
         });
+
+        time = (TextView) findViewById(R.id.textView2);
+        Reminder reminder = db.reminderDAO().get();
+        time.setText("Reminder set for: " + reminder.getHour() + ":" + reminder.getMin());
     }
 
     @Override
-    public void onTimeSet(android.widget.TimePicker view, int hourOfDay, final int minute) {
-        time = (TextView) findViewById(R.id.textView2);
+    public void onTimeSet(android.widget.TimePicker view, int hourOfDay, int minute) {
         String hour = Integer.toString(hourOfDay);
         String min = Integer.toString(minute);
-        time.setText(hour +":" + min);
-        Reminder reminder = new Reminder(hourOfDay, minute);
-        db.reminderDAO().add(reminder);
-
         Intent intent = new Intent(AddReminder.this, AlarmReciver.class);
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        System.out.println(hourOfDay);
-        if (hourOfDay == 14){
-            hourOfDay = 2;
-        }
+        boolean format = DateFormat.is24HourFormat(getApplicationContext());
+
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
 
-        System.out.println(hourOfDay);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-    }
+        final Reminder reminder1 = db.reminderDAO().get();
 
-    public void testNotification(View view){
-        NotificationUtils.remindUSer(this);
+        reminder1.setHour(hourOfDay);
+        reminder1.setMin(minute);
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                db.reminderDAO().edit(reminder1);
+            }
+        });
+
+        time.setText("Reminder set for: " + hourOfDay + ":" + minute);
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 }

@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         if (currentUser == null){
+
             Intent intent = new Intent(this, EmailPasswordActivity.class);
             startActivity(intent);
         }else {
@@ -295,6 +296,7 @@ public class MainActivity extends AppCompatActivity
                 barDataSet.setHighLightAlpha(0);
                 barChart.setData(data);
                 barDataSet.setColor(Color.rgb(198, 24,21));
+                barChart.invalidate();
             }
 
         });
@@ -389,6 +391,7 @@ public class MainActivity extends AppCompatActivity
                 barDataSet.setHighLightAlpha(0);
                 barChartIncome.setData(data);
                 barDataSet.setColor(Color.rgb(47, 163, 57));
+                barChartIncome.invalidate();
             }
 
         });

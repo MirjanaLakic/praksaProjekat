@@ -46,6 +46,7 @@ public class AlarmReciver extends BroadcastReceiver {
         Intent intent = new Intent(context, AddNewExpense.class);
         intent.putExtra("item", "EXPENSES");
         intent.putExtra("edit", "add");
+        intent.putExtra("reminder", "reminder");
         return PendingIntent.getActivity(context, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
