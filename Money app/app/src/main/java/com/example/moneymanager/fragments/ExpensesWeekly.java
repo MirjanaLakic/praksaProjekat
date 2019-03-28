@@ -175,6 +175,7 @@ public class ExpensesWeekly extends Fragment {
                 budget = (TextView) view.findViewById(R.id.budget);
                 String s = Float.toString(sum);
                 budget.setText("Budget: " + s);
+                budget.setTextColor(Color.rgb(35, 76, 226));
             }
         });
     }
@@ -224,9 +225,9 @@ public class ExpensesWeekly extends Fragment {
                 float finalBalance = budget - sum;
                 balance = (TextView) view.findViewById(R.id.balance);
                 if (finalBalance >= 0){
-                    balance.setTextColor(Color.GREEN);
+                    balance.setTextColor(Color.rgb(47, 163, 57));
                 }else {
-                    balance.setTextColor(Color.RED);
+                    balance.setTextColor(Color.rgb(198, 24,21));
                 }
                 String s = Float.toString(finalBalance);
                 balance.setText("Balance: "+s);

@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity
 
         db = AppDatabase.getInstance(this);
 
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -295,7 +294,7 @@ public class MainActivity extends AppCompatActivity
                 barDataSet.setDrawValues(false);
                 barDataSet.setHighLightAlpha(0);
                 barChart.setData(data);
-                barDataSet.setColor(Color.RED);
+                barDataSet.setColor(Color.rgb(198, 24,21));
             }
 
         });
@@ -389,7 +388,7 @@ public class MainActivity extends AppCompatActivity
                 barDataSet.setDrawValues(false);
                 barDataSet.setHighLightAlpha(0);
                 barChartIncome.setData(data);
-                barDataSet.setColor(Color.GREEN);
+                barDataSet.setColor(Color.rgb(47, 163, 57));
             }
 
         });

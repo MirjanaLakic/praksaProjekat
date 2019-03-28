@@ -53,26 +53,28 @@ public class AddReminder extends AppCompatActivity implements TimePickerDialog.O
     }
 
     @Override
-    public void onTimeSet(android.widget.TimePicker view, final int hourOfDay, final int minute) {
+    public void onTimeSet(android.widget.TimePicker view, int hourOfDay, final int minute) {
         time = (TextView) findViewById(R.id.textView2);
         String hour = Integer.toString(hourOfDay);
         String min = Integer.toString(minute);
         time.setText(hour +":" + min);
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                Reminder reminder = new Reminder(hourOfDay, minute);
-                db.reminderDAO().add(reminder);
-            }
-        });
+        Reminder reminder = new Reminder(hourOfDay, minute);
+        db.reminderDAO().add(reminder);
 
         Intent intent = new Intent(AddReminder.this, AlarmReciver.class);
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        System.out.println(hourOfDay);
+        if (hourOfDay == 14){
+            hourOfDay = 2;
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        System.out.println(hourOfDay);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 

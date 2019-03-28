@@ -145,12 +145,12 @@ public class ExpensesMonthly extends Fragment {
         //create the data set
         LineDataSet lineDataSet = new LineDataSet(yEntry, "expense");
         LineDataSet lineDataSet1 = new LineDataSet(xEntry, "income");
-        lineDataSet.setColor(Color.RED);
-        lineDataSet1.setColor(Color.GREEN);
-        lineDataSet.setCircleColor(Color.RED);
-        lineDataSet1.setCircleColor(Color.GREEN);
-        lineDataSet.setCircleColorHole(Color.RED);
-        lineDataSet1.setCircleColorHole(Color.GREEN);
+        lineDataSet1.setColor(Color.rgb(47, 163, 57));
+        lineDataSet.setColor(Color.rgb(198, 24,21));
+        lineDataSet1.setCircleColor(Color.rgb(47, 163, 57));
+        lineDataSet.setCircleColor(Color.rgb(198, 24,21));
+        lineDataSet1.setCircleColorHole(Color.rgb(47, 163, 57));
+        lineDataSet.setCircleColorHole(Color.rgb(198, 24,21));
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(lineDataSet);
         dataSets.add(lineDataSet1);
