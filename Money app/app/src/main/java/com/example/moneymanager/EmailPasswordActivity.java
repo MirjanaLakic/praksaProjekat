@@ -36,6 +36,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 //import com.google.firebase.quickstart.auth.R;
@@ -214,6 +215,27 @@ public class EmailPasswordActivity extends BaseActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             currentUser = mAuth.getCurrentUser();
                             lastUser = db.lastUserDAO().getLastUser();
+                            //ukoliko se drugi user uloguje na isti uredjaj vidi druge podatke
+                            //ali treba da se sredi kupljenje iz baze
+/*                            final List<Category> allCat;
+                            final List<ExpensesAndIncomes> allEx;
+                            if (!lastUser.getEmail().equals(currentUser.getEmail())) {
+                                allCat = db.categoryDAO().getAll();
+                                allEx = db.expensesAndIncomeDAO().getall();
+                                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (int i = 0; i < allCat.size(); i++) {
+                                            db.categoryDAO().deleteCateogry(allCat.get(i));
+                                        }
+                                        for (int i = 0; i < allEx.size(); i++) {
+                                            db.expensesAndIncomeDAO().delete(allEx.get(i));
+                                        }
+                                        TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
+                                        db.timeStampDAO().delete(timeStamp);
+                                    }
+                                });
+                            }*/
                             syncBase();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
@@ -311,8 +333,7 @@ public class EmailPasswordActivity extends BaseActivity implements
 
     @Override
     public void onBackPressed() {
-        finish();
-        moveTaskToBack(true);
+        finishAffinity();
     }
 
     public void syncBase(){
@@ -371,7 +392,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                             Category category = document.toObject(Category.class);
                                                             idCloud.add(category.getId());
-                                                            if (!idList.contains(category.getId())) {
+                                                            if ((!idList.contains(category.getId())) && category.getId() != 0) {
                                                                 final Category newCat = new Category(category.getId(), category.getName(), category.getPhoto(), category.getType());
                                                                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                     @Override
@@ -380,13 +401,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                     }
                                                                 });
 
-                                                            }
-                                                        }
-                                                        if (idCloud.contains(0)){
-                                                            for (int i = 0; i < idCloud.size(); i++) {
-                                                                if (idCloud.get(i) == 0){
-                                                                    idCloud.remove(idCloud.get(i));
-                                                                }
                                                             }
                                                         }
                                                         if (idList.size() > idCloud.size()){
@@ -489,7 +503,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                                 Category category = document.toObject(Category.class);
                                                                 idCloud.add(category.getId());
-                                                                if (!idList.contains(category.getId())) {
+                                                                if ((!idList.contains(category.getId()))  && category.getId() != 0) {
                                                                     final Category newCat = new Category(category.getId(), category.getName(), category.getPhoto(), category.getType());
                                                                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                         @Override
@@ -498,13 +512,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                         }
                                                                     });
 
-                                                                }
-                                                            }
-                                                            if (idCloud.contains(0)) {
-                                                                for (int i = 0; i < idCloud.size(); i++) {
-                                                                    if (idCloud.get(i) == 0) {
-                                                                        idCloud.remove(idCloud.get(i));
-                                                                    }
                                                                 }
                                                             }
                                                             if (idList.size() > idCloud.size()) {
@@ -605,7 +612,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                                     ExpensesAndIncomes item = document.toObject(ExpensesAndIncomes.class);
                                                                     idCloud.add(item.getId());
-                                                                    if (!idList.contains(item.getId())) {
+                                                                    if ((!idList.contains(item.getId()))  && item.getId() != 0) {
                                                                         final ExpensesAndIncomes newItem = new ExpensesAndIncomes(item.getId(), item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
                                                                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                             @Override
@@ -614,13 +621,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                             }
                                                                         });
 
-                                                                    }
-                                                                }
-                                                                if (idCloud.contains(0)) {
-                                                                    for (int i = 0; i < idCloud.size(); i++) {
-                                                                        if (idCloud.get(i) == 0) {
-                                                                            idCloud.remove(idCloud.get(i));
-                                                                        }
                                                                     }
                                                                 }
                                                                 if (idList.size() > idCloud.size()) {
@@ -634,6 +634,34 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                                 }
                                                                             });
 
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                                                                    ExpensesAndIncomes cloutItem = document.toObject(ExpensesAndIncomes.class);
+                                                                    final ExpensesAndIncomes item = db.expensesAndIncomeDAO().findById(cloutItem.getId());
+                                                                    boolean check = false;
+                                                                    if (cloutItem.getId() != 0) {
+                                                                        if (item.getPrice() != cloutItem.getPrice()) {
+                                                                            item.setPrice(cloutItem.getPrice());
+                                                                            check = true;
+                                                                        }
+                                                                        if (!item.getNote().equals(cloutItem.getNote())) {
+                                                                            item.setNote(cloutItem.getNote());
+                                                                            check = true;
+                                                                        }
+                                                                        if (item.getCategory() != cloutItem.getCategory()) {
+                                                                            item.setCategory(cloutItem.getCategory());
+                                                                            check = true;
+                                                                        }
+                                                                        if (check == true) {
+                                                                            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                                                                @Override
+                                                                                public void run() {
+                                                                                    db.expensesAndIncomeDAO().edit(item);
+                                                                                }
+                                                                            });
                                                                         }
                                                                     }
                                                                 }
@@ -709,14 +737,14 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                             List<Integer> idList = new ArrayList<>();
                                                             List<Integer> idCloud = new ArrayList<>();
-                                                            List<ExpensesAndIncomes> list = db.expensesAndIncomeDAO().getExpenses();
+                                                            List<ExpensesAndIncomes> list = db.expensesAndIncomeDAO().getIncome();
                                                             for (int i = 0; i < list.size(); i++) {
                                                                 idList.add(list.get(i).getId());
                                                             }
                                                             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                                 ExpensesAndIncomes item = document.toObject(ExpensesAndIncomes.class);
                                                                 idCloud.add(item.getId());
-                                                                if (!idList.contains(item.getId())) {
+                                                                if ((!idList.contains(item.getId()))  && item.getId() != 0) {
                                                                     final ExpensesAndIncomes newItem = new ExpensesAndIncomes(item.getId(), item.getNote(), item.getPrice(), item.getDate(), item.getType(), item.getCategory());
                                                                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                                                         @Override
@@ -725,13 +753,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                         }
                                                                     });
 
-                                                                }
-                                                            }
-                                                            if (idCloud.contains(0)) {
-                                                                for (int i = 0; i < idCloud.size(); i++) {
-                                                                    if (idCloud.get(i) == 0) {
-                                                                        idCloud.remove(idCloud.get(i));
-                                                                    }
                                                                 }
                                                             }
                                                             if (idList.size() > idCloud.size()) {
@@ -745,6 +766,33 @@ public class EmailPasswordActivity extends BaseActivity implements
                                                                             }
                                                                         });
 
+                                                                    }
+                                                                }
+                                                            }
+                                                            for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                                                                ExpensesAndIncomes cloutItem = document.toObject(ExpensesAndIncomes.class);
+                                                                final ExpensesAndIncomes item = db.expensesAndIncomeDAO().findById(cloutItem.getId());
+                                                                boolean check = false;
+                                                                if (cloutItem.getId() != 0) {
+                                                                    if (item.getPrice() != cloutItem.getPrice()) {
+                                                                        item.setPrice(cloutItem.getPrice());
+                                                                        check = true;
+                                                                    }
+                                                                    if (!item.getNote().equals(cloutItem.getNote())) {
+                                                                        item.setNote(cloutItem.getNote());
+                                                                        check = true;
+                                                                    }
+                                                                    if (item.getCategory() != cloutItem.getCategory()) {
+                                                                        item.setCategory(cloutItem.getCategory());
+                                                                        check = true;
+                                                                    }
+                                                                    if (check == true) {
+                                                                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                                                            @Override
+                                                                            public void run() {
+                                                                                db.expensesAndIncomeDAO().edit(item);
+                                                                            }
+                                                                        });
                                                                     }
                                                                 }
                                                             }

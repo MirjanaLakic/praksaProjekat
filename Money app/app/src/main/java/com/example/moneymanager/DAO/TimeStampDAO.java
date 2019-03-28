@@ -1,6 +1,7 @@
 package com.example.moneymanager.DAO;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
@@ -20,4 +21,7 @@ public interface TimeStampDAO {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void edit(TimeStamp item);
+
+    @Delete
+    void delete(TimeStamp timeStamp);
 }

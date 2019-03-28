@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ExpensesActivity.class);
+                intent.putExtra("income", 2);
                 startActivity(intent);
             }
         });
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            finish();
+            finishAffinity();
         }
     }
 
@@ -292,6 +293,7 @@ public class MainActivity extends AppCompatActivity
                 BarDataSet barDataSet = new BarDataSet(yBarEx, "Expenses");
                 BarData data = new BarData(barDataSet);
                 barDataSet.setDrawValues(false);
+                barDataSet.setHighLightAlpha(0);
                 barChart.setData(data);
                 barDataSet.setColor(Color.RED);
             }
@@ -351,6 +353,7 @@ public class MainActivity extends AppCompatActivity
         barChart.getLegend().setPosition(Legend.LegendPosition.LEFT_OF_CHART_CENTER);
         barChart.setDrawValueAboveBar(false);
         barChart.setTouchEnabled(true);
+
         addDataToBarEx();
     }
 
@@ -384,6 +387,7 @@ public class MainActivity extends AppCompatActivity
                 BarDataSet barDataSet = new BarDataSet(yBarIn, "Incomes");
                 BarData data = new BarData(barDataSet);
                 barDataSet.setDrawValues(false);
+                barDataSet.setHighLightAlpha(0);
                 barChartIncome.setData(data);
                 barDataSet.setColor(Color.GREEN);
             }
