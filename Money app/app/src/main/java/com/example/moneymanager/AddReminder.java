@@ -73,7 +73,6 @@ public class AddReminder extends AppCompatActivity implements TimePickerDialog.O
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
 
         final Reminder reminder1 = db.reminderDAO().get();
 
