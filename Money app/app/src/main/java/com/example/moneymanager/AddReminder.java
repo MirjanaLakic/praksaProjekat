@@ -54,7 +54,9 @@ public class AddReminder extends AppCompatActivity implements TimePickerDialog.O
 
         time = (TextView) findViewById(R.id.textView2);
         Reminder reminder = db.reminderDAO().get();
-        time.setText("Reminder set for: " + reminder.getHour() + ":" + reminder.getMin());
+        if (reminder != null){
+            time.setText("Reminder set for: " + reminder.getHour() + ":" + reminder.getMin());
+        }
     }
 
     @Override
@@ -75,15 +77,26 @@ public class AddReminder extends AppCompatActivity implements TimePickerDialog.O
 
         final Reminder reminder1 = db.reminderDAO().get();
 
-        reminder1.setHour(hourOfDay);
-        reminder1.setMin(minute);
-
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                db.reminderDAO().edit(reminder1);
-            }
-        });
+        if (reminder1 == null){
+            final Reminder reminder2 = new Reminder();
+            reminder2.setHour(hourOfDay);
+            reminder2.setMin(minute);
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    db.reminderDAO().add(reminder2);
+                }
+            });
+        }else {
+            reminder1.setHour(hourOfDay);
+            reminder1.setMin(minute);
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    db.reminderDAO().edit(reminder1);
+                }
+            });
+        }
 
         time.setText("Reminder set for: " + hourOfDay + ":" + minute);
 

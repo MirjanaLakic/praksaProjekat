@@ -41,6 +41,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -172,6 +173,10 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, AddReminder.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.incomes) {
+            Intent intent = new Intent(this, IncomesActivity.class);
+            startActivity(intent);
+            return true;
         } else if (id == R.id.nav_send) {
             LastUser lastUser = db.lastUserDAO().getLastUser();
             if (lastUser == null){
@@ -269,7 +274,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onChanged(@Nullable List<Category> lista) {
                 ArrayList<Integer> xMonth = new ArrayList<>();
-                final ArrayList<Integer> listMonths = getMonthList();
+                final List<Integer> listMonths = Arrays.asList(9,10,11,12,1,2,3);
                 int increment = 0;
                 for (int j = 0; j < listMonths.size(); j++) {
                     float sum = 0;
@@ -313,8 +318,10 @@ public class MainActivity extends AppCompatActivity
         String[] parse = s.split("/");
         int month = Integer.valueOf(parse[1]);
         listofMonths.add(month);
-        for (int i = 5; i >= 0; i--) {
+        for (int i = 0; i <= 5; i++) {
             cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)+1));
+           /* System.out.println(Calendar.MONTH);
+            System.out.println(cal.get(Calendar.MONTH)+1);*/
             current = cal.getTime();
             s = dateFormat.format(current);
             parse = s.split("/");
@@ -326,7 +333,8 @@ public class MainActivity extends AppCompatActivity
 
     public ArrayList<String> getMonthFirstLetter(){
         String[] firstLetter = {"J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"};
-        ArrayList<Integer> lastSix = getMonthList();
+        //ArrayList<Integer> lastSix = getMonthList();
+        List<Integer> lastSix = Arrays.asList(9,10,11,12,1,2,3);
         ArrayList<String> first = new ArrayList<>();
         for (int i = 0; i < lastSix.size(); i++) {
             first.add(firstLetter[lastSix.get(i)-1]);
@@ -364,7 +372,7 @@ public class MainActivity extends AppCompatActivity
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(@Nullable List<Category> lista) {
-                final ArrayList<Integer> listMonths = getMonthList();
+                final List<Integer> listMonths = Arrays.asList(9,10,11,12,1,2,3);
                 int increment = 0;
                 for (int j = 0; j < listMonths.size(); j++) {
                     float sum = 0;
