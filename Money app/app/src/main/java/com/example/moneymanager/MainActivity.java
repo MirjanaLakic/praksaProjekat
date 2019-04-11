@@ -2,15 +2,10 @@ package com.example.moneymanager;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.persistence.room.Dao;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,7 +20,7 @@ import android.widget.TextView;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
-import com.example.moneymanager.DAO.TimeStamp;
+import com.example.moneymanager.DAO.LastUser;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -40,22 +34,14 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -102,10 +88,14 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        yEntry.clear();
+        xEntry.clear();
+
         pieChart = (PieChart) findViewById(R.id.pie_main);
         barChart = (BarChart) findViewById(R.id.bar_expenses_main);
         barChartIncome = (BarChart) findViewById(R.id.bar_incomes_main);
 
+        firedb = FirebaseFirestore.getInstance();
         getUser();
         getList();
 
@@ -121,6 +111,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ExpensesActivity.class);
+                intent.putExtra("income", 2);
                 startActivity(intent);
             }
         });
@@ -129,11 +120,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ExpensesActivity.class);
+                intent.putExtra("income", 2);
                 startActivity(intent);
             }
         });
-
-        syncBase();
 
     }
 
@@ -141,6 +131,7 @@ public class MainActivity extends AppCompatActivity
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         if (currentUser == null){
+
             Intent intent = new Intent(this, EmailPasswordActivity.class);
             startActivity(intent);
         }else {
@@ -154,7 +145,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            finishAffinity();
         }
     }
 
@@ -182,11 +173,20 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, AddReminder.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.nav_manage) {
-            Intent intent = new Intent(this, Proba.class);
+        } else if (id == R.id.incomes) {
+            Intent intent = new Intent(this, IncomesActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_share) {
+            return true;
         } else if (id == R.id.nav_send) {
+            LastUser lastUser = db.lastUserDAO().getLastUser();
+            if (lastUser == null){
+                LastUser lastUser1 = new LastUser();
+                lastUser1.setEmail(currentUser.getEmail());
+                db.lastUserDAO().newLastUser(lastUser1);
+            }else {
+                lastUser.setEmail(currentUser.getEmail());
+                db.lastUserDAO().edit(lastUser);
+            }
             auth.signOut();
             Intent intent = new Intent(this, EmailPasswordActivity.class);
             startActivity(intent);
@@ -268,17 +268,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addDataToBarEx(){
-        Date date2 = new Date();
-        String seventhDay = dateFormat.format(date2);
-        final String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[1]);
         db = AppDatabase.getInstance(MainActivity.this);
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllExpences();
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(@Nullable List<Category> lista) {
                 ArrayList<Integer> xMonth = new ArrayList<>();
-                final ArrayList<Integer> listMonths = getMonthList();
+                final List<Integer> listMonths = getMonthList();
                 int increment = 0;
                 for (int j = 0; j < listMonths.size(); j++) {
                     float sum = 0;
@@ -302,8 +298,10 @@ public class MainActivity extends AppCompatActivity
                 BarDataSet barDataSet = new BarDataSet(yBarEx, "Expenses");
                 BarData data = new BarData(barDataSet);
                 barDataSet.setDrawValues(false);
+                barDataSet.setHighLightAlpha(0);
                 barChart.setData(data);
-                barDataSet.setColor(Color.RED);
+                barDataSet.setColor(Color.rgb(198, 24,21));
+                barChart.invalidate();
             }
 
         });
@@ -320,7 +318,7 @@ public class MainActivity extends AppCompatActivity
         String[] parse = s.split("/");
         int month = Integer.valueOf(parse[1]);
         listofMonths.add(month);
-        for (int i = 5; i >= 0; i--) {
+        for (int i = 0; i <= 5; i++) {
             cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)+1));
             current = cal.getTime();
             s = dateFormat.format(current);
@@ -361,32 +359,28 @@ public class MainActivity extends AppCompatActivity
         barChart.getLegend().setPosition(Legend.LegendPosition.LEFT_OF_CHART_CENTER);
         barChart.setDrawValueAboveBar(false);
         barChart.setTouchEnabled(true);
+
         addDataToBarEx();
     }
 
     public void addDataToBarIn(){
-        Date date2 = new Date();
-        String seventhDay = dateFormat.format(date2);
-        final String[] str = seventhDay.split("/");
-        final int sevenDays = Integer.valueOf(str[1]);
         db = AppDatabase.getInstance(MainActivity.this);
         LiveData<List<Category>> tasks = db.categoryDAO().loadAllIncomes();
         tasks.observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(@Nullable List<Category> lista) {
-                ArrayList<Integer> xMonth = new ArrayList<>();
-                final ArrayList<Integer> listMonths = getMonthList();
+                final List<Integer> listMonths = getMonthList();
                 int increment = 0;
                 for (int j = 0; j < listMonths.size(); j++) {
                     float sum = 0;
                     for (int i = 0; i < lista.size(); i++) {
-                        List<ExpensesAndIncomes> categoryExpesess = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
-                        for (int k = 0; k < categoryExpesess.size(); k++) {
-                            String dateFromLista = dateFormat.format(categoryExpesess.get(k).getDate());
+                        List<ExpensesAndIncomes> list = db.expensesAndIncomeDAO().getExpensesForOneCategory(lista.get(i).getId());
+                        for (int k = 0; k < list.size(); k++) {
+                            String dateFromLista = dateFormat.format(list.get(k).getDate());
                             String[] parse = dateFromLista.split("/");
                             int parseInt = Integer.valueOf(parse[1]);
                             if (listMonths.get(j) == parseInt) {
-                                sum += categoryExpesess.get(k).getPrice();
+                                sum += list.get(k).getPrice();
                             }
 
                         }
@@ -399,8 +393,10 @@ public class MainActivity extends AppCompatActivity
                 BarDataSet barDataSet = new BarDataSet(yBarIn, "Incomes");
                 BarData data = new BarData(barDataSet);
                 barDataSet.setDrawValues(false);
+                barDataSet.setHighLightAlpha(0);
                 barChartIncome.setData(data);
-                barDataSet.setColor(Color.GREEN);
+                barDataSet.setColor(Color.rgb(47, 163, 57));
+                barChartIncome.invalidate();
             }
 
         });
@@ -424,12 +420,8 @@ public class MainActivity extends AppCompatActivity
         barChartIncome.getAxisLeft().setDrawGridLines(false);
         barChartIncome.getLegend().setPosition(Legend.LegendPosition.LEFT_OF_CHART_CENTER);
         barChartIncome.setDrawValueAboveBar(false);
-        barChartIncome.setTouchEnabled(false);
+        barChartIncome.setTouchEnabled(true);
         addDataToBarIn();
-    }
-
-    public void testNotification(View view){
-        NotificationUtils.remindUSer(this);
     }
 
     private void setUser(FirebaseUser currentUser){
@@ -459,60 +451,4 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
-    public void syncBase(){
-        firedb = FirebaseFirestore.getInstance();
-        firedb.collection("Categories").document(currentUser.getEmail())
-                .collection("UserCategoriesExpenses").document("time").get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String strTime = (String) documentSnapshot.get("time");
-                        TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
-                        if (timeStamp == null){
-                            firedb.collection("Categories").document(currentUser.getEmail())
-                                    .collection("UserCategoriesExpenses").get()
-                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                            for (QueryDocumentSnapshot document : queryDocumentSnapshots){
-                                                Category category = document.toObject(Category.class);
-                                                db.categoryDAO().addCategory(category);
-                                            }
-                                        }
-                                    });
-                            TimeStamp obj = new TimeStamp(strTime);
-                            db.timeStampDAO().addTimeStamp(obj);
-                        }else {
-                            if (timeStamp.getTimeCategory() != null && strTime != null) {
-                                if (!strTime.equals(timeStamp.getTimeCategory())) {
-                                    firedb.collection("Categories").document(currentUser.getEmail())
-                                            .collection("UserCategoriesExpenses").get()
-                                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                @Override
-                                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                    List<Integer> idList = new ArrayList<>();
-                                                    List<Category> list = db.categoryDAO().loadExpenses();
-                                                    for (int i = 0; i < list.size(); i++) {
-                                                        idList.add(list.get(i).getId());
-                                                    }
-                                                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                                        Category category = document.toObject(Category.class);
-                                                        if (!idList.contains(category.getId())) {
-                                                            Category newCat = new Category(category.getName(), category.getPhoto(), category.getType());
-                                                            db.categoryDAO().addCategory(newCat);
-                                                        }
-                                                    }
-                                                }
-                                            });
-                                    timeStamp.setTimeCategory(strTime);
-                                    timeStamp.setId(timeStamp.getId());
-                                    db.timeStampDAO().edit(timeStamp);
-                                }
-                            }
-                        }
-                    }
-                });
-    }
-
 }

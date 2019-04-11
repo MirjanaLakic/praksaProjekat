@@ -1,12 +1,9 @@
 package com.example.moneymanager;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,19 +16,18 @@ import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class RecyclerViewAdapterExpense extends RecyclerView.Adapter<RecyclerViewAdapterExpense.MyViewHolder> {
-
+public class RecyclerViewIncomes extends RecyclerView.Adapter<RecyclerViewIncomes.MyViewHolder> {
     private Context context;
     private List<ExpensesAndIncomes> data;
     private AppDatabase db;
     private static final String DATE_FORMAT = "dd/MM/yyy";
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+    private TextView textView;
 
-    public RecyclerViewAdapterExpense(Context context, List<ExpensesAndIncomes> data) {
+    public RecyclerViewIncomes(Context context, List<ExpensesAndIncomes> data) {
         this.context = context;
         this.data = data;
     }
@@ -41,6 +37,10 @@ public class RecyclerViewAdapterExpense extends RecyclerView.Adapter<RecyclerVie
         View v;
         db = AppDatabase.getInstance(context);
         v = LayoutInflater.from(context).inflate(R.layout.item_expense, viewGroup, false);
+
+        textView = (TextView) v.findViewById(R.id.price);
+        textView.setTextColor(Color.rgb(47, 163, 57));
+
         MyViewHolder myViewHolder = new MyViewHolder(v);
         return myViewHolder;
     }
@@ -49,7 +49,7 @@ public class RecyclerViewAdapterExpense extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(MyViewHolder myViewHolder, int i) {
 
-        List<Category> categories = db.categoryDAO().loadExpenses();
+        List<Category> categories = db.categoryDAO().loadIncomes();
 
         if (categories.size() != 0) {
             myViewHolder.memo.setText(data.get(i).getNote());
@@ -110,5 +110,4 @@ public class RecyclerViewAdapterExpense extends RecyclerView.Adapter<RecyclerVie
         data = list;
         notifyDataSetChanged();
     }
-
 }

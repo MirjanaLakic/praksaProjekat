@@ -24,6 +24,9 @@ public class Reminder {
         this.min = min;
     }
 
+    public Reminder() {
+    }
+
     public int getId() {
         return id;
     }

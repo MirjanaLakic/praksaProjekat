@@ -41,7 +41,6 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 
 public class CategoryExpenses extends Fragment {
 
-
     private AppDatabase db;
     private FirebaseFirestore firedb;
     private FirebaseAuth auth;
@@ -101,7 +100,4 @@ public class CategoryExpenses extends Fragment {
             }
         });
     }
-
-
-
 }

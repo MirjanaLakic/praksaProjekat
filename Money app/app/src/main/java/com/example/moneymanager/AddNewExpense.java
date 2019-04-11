@@ -1,5 +1,6 @@
 package com.example.moneymanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -16,9 +17,17 @@ import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
 import com.example.moneymanager.DAO.Icon;
+import com.example.moneymanager.DAO.TimeStamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class AddNewExpense extends AppCompatActivity implements Icon {
 
@@ -31,7 +40,11 @@ public class AddNewExpense extends AppCompatActivity implements Icon {
     private RecyclerViewIconAndName recyclerViewAdapter;
     private int categoryID;
     private ActionBar actionBar;
-    AppDatabase db;
+    private AppDatabase db;
+    private FirebaseAuth auth;
+    private FirebaseFirestore fireDB;
+    private static final String TIME_FORMAT = "dd/MM/yyy HH:mm:ss";
+    private SimpleDateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,6 +115,42 @@ public class AddNewExpense extends AppCompatActivity implements Icon {
                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                             @Override
                             public void run() {
+
+                                auth = FirebaseAuth.getInstance();
+                                FirebaseUser currentUser = auth.getCurrentUser();
+                                db = AppDatabase.getInstance(getApplicationContext());
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("id", editItem.getId());
+                                map.put("note", editItem.getNote());
+                                map.put("price", editItem.getPrice());
+                                map.put("date", editItem.getDate());
+                                map.put("type", editItem.getType());
+                                map.put("category", editItem.getCategory());
+
+                                Date date = new Date();
+                                String time = timeFormat.format(date);
+                                Map<String, String> timeMap = new HashMap<>();
+                                timeMap.put("time", time);
+
+                                TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
+                                fireDB = FirebaseFirestore.getInstance();
+                                if (item.getType().equals("EXPENSES")) {
+                                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Expenses").document(editItem.getNote())
+                                            .set(map);
+                                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Expenses").document("time")
+                                            .set(timeMap);
+                                    timeStamp.setTimeExpenses(time);
+                                    db.timeStampDAO().edit(timeStamp);
+                                }else {
+                                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Incomes").document(editItem.getNote())
+                                            .set(map);
+                                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Incomes").document("time")
+                                            .set(timeMap);
+                                    timeStamp.setTimeIncomes(time);
+                                    db.timeStampDAO().edit(timeStamp);
+                                }
+
                                 db.expensesAndIncomeDAO().edit(editItem);
                                 finish();
                             }
@@ -132,16 +181,52 @@ public class AddNewExpense extends AppCompatActivity implements Icon {
     }
 
     public void onSaveButtonClicked(){
-        String memoStr = memo.getText().toString();
-        float priceint = Float.valueOf(price.getText().toString());
+        final String memoStr = memo.getText().toString();
+        final float priceint = Float.valueOf(price.getText().toString());
 
         final ExpensesAndIncomes obj;
-        Date date = new Date();
+        final Date date = new Date();
         obj = new ExpensesAndIncomes(memoStr, priceint, date, getIntent().getStringExtra("item"), categoryID);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 db.expensesAndIncomeDAO().addNew(obj);
+
+
+                ExpensesAndIncomes item = db.expensesAndIncomeDAO().find(memoStr, priceint, date, getIntent().getStringExtra("item"), categoryID);
+                auth = FirebaseAuth.getInstance();
+                FirebaseUser currentUser = auth.getCurrentUser();
+                db = AppDatabase.getInstance(getApplicationContext());
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", item.getId());
+                map.put("note", item.getNote());
+                map.put("price", item.getPrice());
+                map.put("date", item.getDate());
+                map.put("type", item.getType());
+                map.put("category", item.getCategory());
+
+                Date date = new Date();
+                String time = timeFormat.format(date);
+                Map<String, String> timeMap = new HashMap<>();
+                timeMap.put("time", time);
+
+                TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
+                fireDB = FirebaseFirestore.getInstance();
+                if (item.getType().equals("EXPENSES")) {
+                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Expenses").document(item.getNote())
+                            .set(map);
+                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Expenses").document("time")
+                            .set(timeMap);
+                    timeStamp.setTimeExpenses(time);
+                    db.timeStampDAO().edit(timeStamp);
+                }else {
+                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Incomes").document(item.getNote())
+                            .set(map);
+                    fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Incomes").document("time")
+                            .set(timeMap);
+                    timeStamp.setTimeIncomes(time);
+                    db.timeStampDAO().edit(timeStamp);
+                }
                 finish();
             }
         });

@@ -130,7 +130,6 @@ public class ExpensesDaily extends Fragment {
                 pieDaily.setCenterText("Daily \n Expenses \n"+ finalSum);
                 pieDaily.setTouchEnabled(false);
                 pieDaily.invalidate();
-
             }
 
         });
@@ -173,9 +172,11 @@ public class ExpensesDaily extends Fragment {
                     budget = (TextView) view.findViewById(R.id.budget);
                     String s = Float.toString(sum);
                     budget.setText("Budget: " + s);
+                    budget.setTextColor(Color.rgb(35, 76, 226));
                 }else {
                     budget = (TextView) view.findViewById(R.id.budget);
                     budget.setText("Budget: 0.0");
+                    budget.setTextColor(Color.rgb(35, 76, 226));
                 }
             }
         });
@@ -222,14 +223,14 @@ public class ExpensesDaily extends Fragment {
                                 budget += categoryIncome.get(j).getPrice();
                             }
                         }
-
                     }
+
                     float finalBalance = budget - sum;
                     balance = (TextView) view.findViewById(R.id.balance);
                     if (finalBalance >= 0) {
-                        balance.setTextColor(Color.GREEN);
+                        balance.setTextColor(Color.rgb(47, 163, 57));
                     } else {
-                        balance.setTextColor(Color.RED);
+                        balance.setTextColor(Color.rgb(198, 24,21));
                     }
                     String s = Float.toString(finalBalance);
                     balance.setText("Balance: " + s);
@@ -237,4 +238,6 @@ public class ExpensesDaily extends Fragment {
             }
         });
     }
+
+
 }

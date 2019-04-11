@@ -19,9 +19,16 @@ import android.widget.TextView;
 import com.example.moneymanager.DAO.AppDatabase;
 import com.example.moneymanager.DAO.Category;
 import com.example.moneymanager.DAO.ExpensesAndIncomes;
+import com.example.moneymanager.DAO.TimeStamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class Details extends AppCompatActivity {
 
@@ -35,8 +42,12 @@ public class Details extends AppCompatActivity {
     private static final String DATE_FORMAT = "dd/MM/yyy";
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
     private Category cat;
-    FloatingActionButton edit;
-    ActionMenuItemView delete;
+    private FloatingActionButton edit;
+    private ActionMenuItemView delete;
+    private FirebaseAuth auth;
+    private FirebaseFirestore fireDB;
+    private static final String TIME_FORMAT = "dd/MM/yyy HH:mm:ss";
+    private SimpleDateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
 
 
     @Override
@@ -118,6 +129,32 @@ public class Details extends AppCompatActivity {
                     public void run() {
                         int idItem = getIntent().getIntExtra("id", 0);
                         ExpensesAndIncomes item = db.expensesAndIncomeDAO().findById(idItem);
+                        auth = FirebaseAuth.getInstance();
+                        FirebaseUser currentUser = auth.getCurrentUser();
+                        db = AppDatabase.getInstance(getApplicationContext());
+
+                        Date date = new Date();
+                        String time = timeFormat.format(date);
+                        Map<String, String> timeMap = new HashMap<>();
+                        timeMap.put("time", time);
+
+                        TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
+                        fireDB = FirebaseFirestore.getInstance();
+                        if (item.getType().equals("EXPENSES")) {
+                            fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Expenses").document(item.getNote())
+                                    .delete();
+                            fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Expenses").document("time")
+                                    .set(timeMap);
+                            timeStamp.setTimeExpenses(time);
+                            db.timeStampDAO().edit(timeStamp);
+                        }else {
+                            fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Incomes").document(item.getNote())
+                                    .delete();
+                            fireDB.collection("Expenses").document(currentUser.getEmail()).collection("Incomes").document("time")
+                                    .set(timeMap);
+                            timeStamp.setTimeIncomes(time);
+                            db.timeStampDAO().edit(timeStamp);
+                        }
                         db.expensesAndIncomeDAO().delete(item);
                         finish();
                     }

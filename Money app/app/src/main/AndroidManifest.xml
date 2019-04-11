@@ -78,8 +78,12 @@
             android:label="@string/sign_in">
         </activity>
         <activity
-            android:name=".Proba"
-            android:label="Proba">
+            android:name=".IncomesActivity"
+            android:label="@string/income"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
         <receiver
             android:name=".AlarmReciver" />
