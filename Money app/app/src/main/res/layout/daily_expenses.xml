@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pie_daily"
+        android:layout_width="357dp"
+        android:layout_height="231dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="23dp"
+        android:layout_marginLeft="23dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="31dp"
+        android:layout_marginRight="31dp"></com.github.mikephil.charting.charts.PieChart>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/day_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/pie_daily"
+        android:layout_marginTop="25dp"></android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/budget"
+        android:layout_width="158dp"
+        android:layout_height="34dp"
+        android:layout_alignStart="@+id/pie_daily"
+        android:layout_alignLeft="@+id/pie_daily"
+        android:layout_alignEnd="@+id/pie_daily"
+        android:layout_alignRight="@+id/pie_daily"
+        android:layout_alignBottom="@+id/pie_daily"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginRight="200dp"
+        android:layout_marginBottom="192dp"
+        android:text="BUDGET" />
+
+    <TextView
+        android:id="@+id/balance"
+        android:layout_width="158dp"
+        android:layout_height="34dp"
+        android:layout_alignStart="@+id/pie_daily"
+        android:layout_alignLeft="@+id/pie_daily"
+        android:layout_alignEnd="@+id/pie_daily"
+        android:layout_alignRight="@+id/pie_daily"
+        android:layout_alignBottom="@+id/pie_daily"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="223dp"
+        android:layout_marginLeft="223dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="-23dp"
+        android:layout_marginRight="-23dp"
+        android:layout_marginBottom="192dp"
+        android:text="BALANCE" />
+
+</RelativeLayout>
