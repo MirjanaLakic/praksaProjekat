@@ -215,27 +215,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             currentUser = mAuth.getCurrentUser();
                             lastUser = db.lastUserDAO().getLastUser();
-                            //ukoliko se drugi user uloguje na isti uredjaj vidi druge podatke
-                            //ali treba da se sredi kupljenje iz baze
-/*                            final List<Category> allCat;
-                            final List<ExpensesAndIncomes> allEx;
-                            if (!lastUser.getEmail().equals(currentUser.getEmail())) {
-                                allCat = db.categoryDAO().getAll();
-                                allEx = db.expensesAndIncomeDAO().getall();
-                                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        for (int i = 0; i < allCat.size(); i++) {
-                                            db.categoryDAO().deleteCateogry(allCat.get(i));
-                                        }
-                                        for (int i = 0; i < allEx.size(); i++) {
-                                            db.expensesAndIncomeDAO().delete(allEx.get(i));
-                                        }
-                                        TimeStamp timeStamp = db.timeStampDAO().getCategoryTime();
-                                        db.timeStampDAO().delete(timeStamp);
-                                    }
-                                });
-                            }*/
                             syncBase();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
